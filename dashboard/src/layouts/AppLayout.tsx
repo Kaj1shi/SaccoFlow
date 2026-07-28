@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { initials } from '../lib/format'
+import { loginPageUrl } from '../lib/site'
 
 interface NavItem {
   to: string
@@ -143,7 +144,7 @@ export default function AppLayout({ variant }: { variant: 'admin' | 'super' }) {
     if (import.meta.env.DEV) {
       navigate('/login', { replace: true })
     } else {
-      window.location.href = '/login.html'
+      window.location.href = loginPageUrl()
     }
   }
 

@@ -16,6 +16,7 @@ import RegistrationsPage from './pages/super/RegistrationsPage'
 import UsersPage from './pages/super/UsersPage'
 import AuditLogsPage from './pages/super/AuditLogsPage'
 import { Spinner } from './components/ui'
+import { loginPageUrl } from './lib/site'
 
 function RequireAuth() {
   const { session, profile, loading } = useAuth()
@@ -30,7 +31,7 @@ function RequireAuth() {
     // The site's login.html handles sign-in. The internal /login page is a
     // fallback for running the dashboard on its own with `npm run dev`.
     if (import.meta.env.DEV) return <Navigate to="/login" replace />
-    window.location.href = '/login.html'
+    window.location.href = loginPageUrl()
     return null
   }
   return <Outlet />

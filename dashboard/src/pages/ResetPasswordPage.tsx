@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import { PasswordField } from '../components/PasswordField'
 import { passwordMeetsAllRules } from '../lib/password'
 import { Spinner } from '../components/ui'
+import { loginPageUrl } from '../lib/site'
 
 export default function ResetPasswordPage() {
   const { session, loading } = useAuth()
@@ -80,7 +81,7 @@ export default function ResetPasswordPage() {
         <p className="mt-2 text-sm text-slate-500">
           Request a new one from the login page and use it within an hour.
         </p>
-        <a href="/login.html" className="btn-primary mt-5 inline-flex">
+        <a href={loginPageUrl()} className="btn-primary mt-5 inline-flex">
           Back to login
         </a>
       </div>

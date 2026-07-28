@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact SaccoFlow - Talk to Our Team</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="saccoflow.css">
+  <script src="https://kit.fontawesome.com/8ec4e20c05.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Sacco<span>Flow</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+    <div class="nav-auth">
+      <a href="login.html" class="nav-auth-login">Login</a>
+      <a href="register.html" class="nav-auth-register">Register</a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- CONTACT HERO -->
+  <section class="about-hero-simple">
+    <div class="about-hero-inner">
+      <span class="section-tag">Contact</span>
+      <h1 class="about-hero-title">Talk to the SaccoFlow team.</h1>
+      <p class="about-hero-lead">
+        Share a few details about your SACCO and how you're working today. We'll follow up with a short call, demo, or email — whichever works best for you.
+      </p>
+      <div class="about-hero-meta">
+        <span>Based in Kampala, serving SACCOs across Uganda</span>
+        <span>Response time: within one business day</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT CONTENT -->
+  <section>
+    <div class="contact-layout">
+      <!-- FORM COLUMN -->
+      <div class="contact-form-card">
+        <h2>Send us a message</h2>
+        <p>Tell us about your SACCO and what you're looking for. We'll help you understand whether SaccoFlow is a good fit.</p>
+
+        <form class="contact-form" action="mailto:saccoflow@gmail.com" method="post" enctype="text/plain">
+          <div class="form-row">
+            <div class="form-field">
+              <label for="name">Full name</label>
+              <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-field">
+              <label for="email">Work email</label>
+              <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="sacco">SACCO name</label>
+              <input type="text" id="sacco" name="sacco" placeholder="Your SACCO name" required>
+            </div>
+            <div class="form-field">
+              <label for="phone">Phone / WhatsApp</label>
+              <input type="tel" id="phone" name="phone" placeholder="+256..." required>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="size">Approximate number of members</label>
+            <select id="size" name="size">
+              <option value="">Select range</option>
+              <option value="under-200">Under 200 members</option>
+              <option value="200-1000">200 - 1,000 members</option>
+              <option value="1000-5000">1,000 - 5,000 members</option>
+              <option value="5000-plus">5,000+ members</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="interest">What are you most interested in?</label>
+            <select id="interest" name="interest">
+              <option value="">Choose an option</option>
+              <option value="demo">Book a live demo</option>
+              <option value="pricing">Discuss pricing & plans</option>
+              <option value="migration">Help moving from current system</option>
+              <option value="other">Something else</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="message">How can we help?</label>
+            <textarea id="message" name="message" rows="4" placeholder="Share a short description of your SACCO and what you’d like to improve."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary contact-submit">Send message</button>
+          <p class="contact-footnote">Prefer email? Write to <a href="mailto:saccoflow@gmail.com">saccoflow@gmail.com</a> directly.</p>
+        </form>
+      </div>
+
+      <!-- INFO COLUMN -->
+      <aside class="contact-info-card">
+        <h3>Other ways to reach us</h3>
+        <p>If it's easier, you can contact us using any of the channels below.</p>
+
+        <ul class="contact-info-list">
+          <li>
+            <div class="contact-icon"><i class="fa-brands fa-whatsapp"></i></div>
+            <div>
+              <strong>WhatsApp</strong>
+              <p><a href="https://wa.me/256761255072" target="_blank" rel="noopener noreferrer">+256 761 255 072</a></p>
+            </div>
+          </li>
+          <li>
+            <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+            <div>
+              <strong>Call us</strong>
+              <p><a href="tel:+256761255072">+256 761 255 072</a></p>
+            </div>
+          </li>
+          <li>
+            <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div>
+              <strong>Email</strong>
+              <p><a href="mailto:saccoflow@gmail.com">saccoflow@gmail.com</a></p>
+            </div>
+          </li>
+          <li>
+            <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+            <div>
+              <strong>Location</strong>
+              <p>Kampala, Uganda</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="contact-note">
+          <strong>Office hours</strong>
+          <p>Monday - Friday, 9:00am - 5:00pm (EAT)</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">
+      <div class="logo">Sacco<span>Flow</span></div>
+      <p>Built for Ugandan SACCOs · Kampala, Uganda</p>
+      <p class="footer-copy">&copy; 2026 SaccoFlow. All rights reserved.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="index.html#features">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="mailto:saccoflow@gmail.com">Support</a>
+      <a href="contact.html">Contact</a>
+    </div>
+
+    <div class="footer-right">
+      <div class="footer-social">
+        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="SaccoFlow on Facebook">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="SaccoFlow on X">
+          <i class="fa-brands fa-x-twitter"></i>
+        </a>
+        <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="SaccoFlow on LinkedIn">
+          <i class="fa-brands fa-linkedin-in"></i>
+        </a>
+        <a href="https://wa.me/256761255072" target="_blank" rel="noopener noreferrer" aria-label="Chat with SaccoFlow on WhatsApp">
+          <i class="fa-brands fa-whatsapp"></i>
+        </a>
+      </div>
+      <div class="footer-meta">
+        <a href="#">Privacy Policy</a>
+        <span>•</span>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- STICKY ELEMENTS -->
+  <div class="sticky-cta">
+    <a href="https://wa.me/256761255072" class="wa-btn" target="_blank" title="Chat on WhatsApp">💬</a>
+  </div>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    const nav = document.querySelector('nav');
+    const navToggle = document.querySelector('.nav-toggle');
+    if (nav && navToggle) {
+      const closeMobileNav = () => {
+        nav.classList.remove('nav-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      };
+
+      navToggle.addEventListener('click', () => {
+        const isOpen = nav.classList.toggle('nav-open');
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      nav.querySelectorAll('.nav-links a, .nav-auth a').forEach(link => {
+        link.addEventListener('click', closeMobileNav);
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!nav.contains(e.target)) closeMobileNav();
+      });
+
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) closeMobileNav();
+      });
+    }
+  </script>
+</body>
+</html>
+
