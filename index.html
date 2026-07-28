@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaccoFlow - Digitize Your SACCO</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="saccoflow.css">
+<script src="https://kit.fontawesome.com/8ec4e20c05.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Sacco<span>Flow</span></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-auth">
+    <a href="login.html" class="nav-auth-login">Login</a>
+    <a href="register.html" class="nav-auth-register">Register</a>
+  </div>
+  <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="hero-badge">🇺🇬 Built for Uganda's SACCOs</div>
+    <h1>Digitize Your SACCO.<br><em>Increase Efficiency.</em><br>Serve Members Better.</h1>
+    <p>SaccoFlow automates savings, loans, reporting, and member access — all in one secure, cloud-based platform designed for Ugandan SACCOs.</p>
+    <div class="hero-ctas">
+      <a href="#demo" class="btn-primary">Book a Free Demo</a>
+      <a href="#video" class="btn-secondary">▶ See How It Works</a>
+    </div>
+    <div class="hero-trust">
+      <span>Trusted by Forward-Thinking SACCOs in Uganda</span>
+      <span>Secure. Reliable. Built for Growth.</span>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO SECTION -->
+<section class="video-section" id="video">
+  <div class="center reveal">
+    <span class="section-tag">See It Live</span>
+    <h2 class="section-title">SaccoFlow in Action</h2>
+    <p class="section-sub">Watch how SaccoFlow transforms a SACCO from paper-based chaos to a streamlined digital operation in minutes.</p>
+  </div>
+  <div class="video-grid">
+    <div>
+      <div class="video-embed">
+        <div class="play-btn" onclick="this.innerHTML='<span style=color:white;font-size:0.9rem;font-weight:600>Demo Video Coming Soon</span>'">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+      <p class="video-label">SaccoFlow Platform Demo (90 seconds)</p>
+    </div>
+    <ul class="video-features reveal">
+      <li><div><i class="fa-brands fa-hubspot"></i></div><div><h4>Automate Loan Approvals</h4><p>Reduce processing from days to minutes with smart workflow automation.</p></div></li>
+      <li><div><i class="fa-solid fa-paperclip"></i></div><div><h4>Eliminate Paper Records</h4><p>All member data, transactions, and documents stored securely in the cloud.</p></div></li>
+      <li><div><i class="fa-solid fa-chart-column"></i></div><div><h4>Real-Time Reporting</h4><p>Board-ready reports and compliance summaries at the click of a button.</p></div></li>
+      <li><div><i class="fa-solid fa-mobile-screen"></i></div><div><h4>Member Self-Service Portal</h4><p>Members check balances, apply for loans, and get SMS updates 24/7.</p></div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section id="features">
+  <div class="center reveal">
+    <span class="section-tag">Everything You Need</span>
+    <h2 class="section-title">Everything Your SACCO Needs to Operate Smarter</h2>
+    <p class="section-sub">Expand any feature to see how SaccoFlow delivers value at every level of your SACCO.</p>
+  </div>
+  <div class="benefits-grid" style="margin-top:3rem;">
+    <div class="benefit-card reveal" onclick="this.classList.toggle('open')">
+      <div class="benefit-card-header"><div class="icon"><i class="fa-solid fa-money-check-dollar"></i></div><h3>Automated Loan Management</h3><span class="toggle-icon">+</span></div>
+      <p class="benefit-short">Approve and track loans faster — no spreadsheets, no manual errors.</p>
+      <div class="benefit-body"><ul class="benefit-list"><li>Auto interest calculations & repayment schedules</li><li>SMS reminders sent automatically to borrowers</li><li>Full guarantor management & tracking</li><li>Arrears & default alerts in real time</li></ul></div>
+    </div>
+    <div class="benefit-card reveal" onclick="this.classList.toggle('open')">
+      <div class="benefit-card-header"><div class="icon"><i class="fa-solid fa-people-roof"></i></div><h3>Member Management System</h3><span class="toggle-icon">+</span></div>
+      <p class="benefit-short">Onboard members digitally and manage every account from one dashboard.</p>
+      <div class="benefit-body"><ul class="benefit-list"><li>Digital member onboarding & ID tracking</li><li>Full savings history & real-time balances</li><li>Member self-service mobile portal</li><li>Bulk SMS communication tools</li></ul></div>
+    </div>
+    <div class="benefit-card reveal" onclick="this.classList.toggle('open')">
+      <div class="benefit-card-header"><div class="icon"><i class="fa-solid fa-laptop-file"></i></div><h3>Financial Reports & Compliance</h3><span class="toggle-icon">+</span></div>
+      <p class="benefit-short">Audit-ready financial reports generated automatically — no accountant required.</p>
+      <div class="benefit-body"><ul class="benefit-list"><li>Audit-ready reports & board meeting summaries</li><li>Export to Excel or PDF with one click</li><li>Uganda regulatory compliance built in</li><li>Income statement, balance sheet & trial balance</li></ul></div>
+    </div>
+    <div class="benefit-card reveal" onclick="this.classList.toggle('open')">
+      <div class="benefit-card-header"><div class="icon"><i class="fa-solid fa-lock"></i></div><h3>Secure Cloud Storage</h3><span class="toggle-icon">+</span></div>
+      <p class="benefit-short">Bank-grade security with your data always safe, backed up, and accessible.</p>
+      <div class="benefit-body"><ul class="benefit-list"><li>End-to-end encrypted data storage</li><li>Automated daily backups — no data loss</li><li>Role-based access control for staff</li><li>99.9% uptime guarantee</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- IMAGE TEXT BLOCKS -->
+<div style="padding: 0 5% 60px;">
+  <div class="image-text-block reveal" style="background: linear-gradient(120deg, rgba(4, 45, 75, 0.92) 0%, rgba(122, 200, 255, 0.7) 100%), url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80') center/cover;">
+    <div class="itb-content">
+      <h2>Make Data-Driven Decisions with Real-Time Reports</h2>
+      <p>SaccoFlow gives your board and management the financial intelligence they need — automatically generated, always accurate, always audit-ready.</p>
+      <a href="#demo" class="btn-primary">Get My SACCO Free Demo</a>
+    </div>
+  </div>
+  <div style="height:1.5rem;"></div>
+  <div class="image-text-block reveal" style="background: linear-gradient(120deg, rgba(6,42,70,0.88) 0%, rgba(71, 89, 255, 0.3) 100%), url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&auto=format&fit=crop&q=80') center/cover;">
+    <div class="itb-content">
+      <h2>Give Members 24/7 Access to Their Savings & Loans</h2>
+      <p>With SaccoFlow's member portal, your members can check balances, apply for loans, and receive updates from anywhere — even on basic smartphones.</p>
+      <a href="#demo" class="btn-primary">Modernize My SACCO Today</a>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS 
+<section class="testimonials-section" id="testimonials">
+  <div class="center reveal">
+    <span class="section-tag" style="background:white;">Social Proof</span>
+    <h2 class="section-title">What SACCO Leaders Are Saying</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.6);">Hear from SACCO managers and board members across Uganda who made the switch.</p>
+  </div>
+  <div class="testimonials-grid">
+    <div class="tcard reveal">
+      <p>"Before SaccoFlow, loan processing took days. Now it takes minutes. Our members are happier and our team is less stressed. This is the tool every SACCO in Uganda needs."</p>
+      <div class="tcard-person"><div class="tcard-avatar">SN</div><div class="tcard-info"><strong>Sarah N.</strong><span>Manager, Kampala Community SACCO</span></div></div>
+    </div>
+    <div class="tcard reveal">
+      <p>"Our reports are now accurate and audit-ready. The board used to spend hours reviewing spreadsheets. Now everything is on the dashboard and we make better decisions."</p>
+      <div class="tcard-person"><div class="tcard-avatar">DO</div><div class="tcard-info"><strong>David O.</strong><span>Treasurer, Mbarara SACCO</span></div></div>
+    </div>
+    <div class="tcard reveal">
+      <p>"SaccoFlow understood exactly what we needed as a rural SACCO. The support team speaks our language — both literally and professionally. Highly recommended for all SACCOs."</p>
+      <div class="tcard-person"><div class="tcard-avatar">GM</div><div class="tcard-info"><strong>Grace M.</strong><span>Chairperson, Gulu Teachers SACCO</span></div></div>
+    </div>
+  </div>
+</section> -->
+
+<!-- COMPARISON TABLE-->
+<section id="compare">
+  <div class="center reveal">
+    <span class="section-tag">Why Us</span>
+    <h2 class="section-title">Why SaccoFlow Is Built Specifically for Ugandan SACCOs</h2>
+    <p class="section-sub">Not a generic system retrofitted for Uganda — designed from the ground up for how SACCOs here actually work.</p>
+  </div>
+  <div class="reveal" style="overflow-x:auto;">
+    <table class="comparison-table">
+      <thead><tr><th>Feature</th><th class="blue-col">SaccoFlow ✔</th><th class="red-col">Traditional Systems</th></tr></thead>
+      <tbody>
+        <tr><td>Built specifically for Uganda</td><td class="check">✔ Yes</td><td class="cross">✖ No</td></tr>
+        <tr><td>SACCO-specific workflows</td><td class="check">✔ Yes</td><td class="cross">✖ No</td></tr>
+        <tr><td>Mobile money integration (MTN/Airtel)</td><td class="check">✔ Full</td><td class="limited">⚠ Limited</td></tr>
+        <tr><td>Easy onboarding (days not months)</td><td class="check">✔ Yes</td><td class="cross">✖ Complex</td></tr>
+        <tr><td>Local support team (Uganda)</td><td class="check">✔ Yes</td><td class="cross">✖ No</td></tr>
+        <tr><td>Affordable SACCO pricing</td><td class="check">✔ Yes</td><td class="cross">✖ Expensive</td></tr>
+        <tr><td>Works on basic smartphones</td><td class="check">✔ Yes</td><td class="cross">✖ No</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- THE COST OF STAYING MANUAL -->
+<section style="background:var(--gray); padding:80px 5%;">
+  <div class="manual-digital-grid">
+    <div class="reveal">
+      <span class="section-tag">The Problem</span>
+      <h2 class="section-title">The Cost of Staying Manual</h2>
+      <p style="color:var(--text-muted);margin-bottom:1.5rem;line-height:1.7;">Every day your SACCO operates on paper or spreadsheets, you're losing more than time.</p>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div style="background:white;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid #e74c3c;box-shadow:0 2px 10px rgba(0,0,0,0.05);"><strong style="color:#c0392b;">⚠ Human Error</strong><p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.3rem;">Manual entries lead to wrong balances, missed payments, and member disputes.</p></div>
+        <div style="background:white;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid #e74c3c;box-shadow:0 2px 10px rgba(0,0,0,0.05);"><strong style="color:#c0392b;">⚠ Lost Records</strong><p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.3rem;">Paper files get damaged, lost, or destroyed — with no way to recover them.</p></div>
+        <div style="background:white;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid #e74c3c;box-shadow:0 2px 10px rgba(0,0,0,0.05);"><strong style="color:#c0392b;">⚠ Fraud Risk</strong><p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.3rem;">No audit trail makes it easy for internal fraud to go undetected for months.</p></div>
+        <div style="background:white;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid #e74c3c;box-shadow:0 2px 10px rgba(0,0,0,0.05);"><strong style="color:#c0392b;">⚠ Slow Member Service</strong><p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.3rem;">Members wait days for loans while your competitors serve them in hours.</p></div>
+      </div>
+    </div>
+    <div class="reveal">
+      <span class="section-tag">The Opportunity</span>
+      <h2 class="section-title">The Opportunity of Going Digital</h2>
+      <p style="color:var(--text-muted);margin-bottom:1.5rem;line-height:1.7;">SACCOs that digitize grow faster, retain more members, and build lasting trust.</p>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div style="background:white;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid var(--blue-600);box-shadow:0 2px 10px rgba(0,0,0,0.05);"><strong style="color:var(--blue-700);">✔ Increased Member Trust</strong><p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.3rem;">Real-time balances and transaction history build confidence in your SACCO.</p></div>
+        <div style="background:white;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid var(--blue-600);box-shadow:0 2px 10px rgba(0,0,0,0.05);"><strong style="color:var(--blue-700);">✔ Faster Loan Turnover</strong><p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.3rem;">Process more loans in less time — increasing interest income and member satisfaction.</p></div>
+        <div style="background:white;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid var(--blue-600);box-shadow:0 2px 10px rgba(0,0,0,0.05);"><strong style="color:var(--blue-700);">✔ Better Growth Forecasting</strong><p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.3rem;">Data-driven insights help your board plan investments and grow savings portfolios.</p></div>
+        <div style="background:white;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid var(--blue-600);box-shadow:0 2px 10px rgba(0,0,0,0.05);"><strong style="color:var(--blue-700);">✔ Higher Member Satisfaction</strong><p style="color:var(--text-muted); font-size:.88rem;margin-top:.3rem;">Self-service access, SMS alerts, and fast loans keep members loyal and referring others.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENT -->
+<div class="payment-section reveal">
+  <span class="section-tag">Payments</span>
+  <h2 class="section-title" style="margin-top:0.5rem;">Secure & Flexible Payments</h2>
+  <div class="payment-logos">
+    <div class="payment-chip"><div class="dot" style="background:#FFC200;"></div>MTN Mobile Money</div>
+    <div class="payment-chip"><div class="dot" style="background:#E40613;"></div>Airtel Money</div>
+    <div class="payment-chip"><div class="dot" style="background:#1A1F71;"></div>Visa</div>
+    <div class="payment-chip"><div class="dot" style="background:#EB001B;"></div>Mastercard</div>
+    <div class="payment-chip"><div class="dot" style="background:#0A3D62;"></div>Bank Transfer</div>
+  </div>
+  <div class="trust-line">Secure Payments. Encrypted Transactions. Your data is never shared.</div>
+</div>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="center reveal">
+    <span class="section-tag">FAQ</span>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <p class="section-sub">Got questions? We have answers. If you don't find yours here, just reach out.</p>
+  </div>
+  <div class="faq-grid">
+    <div class="faq-item reveal" onclick="this.classList.toggle('open')"><div class="faq-q">Is our SACCO data secure on SaccoFlow? <span class="faq-icon">+</span></div><div class="faq-a"><p>Yes. SaccoFlow uses bank-grade encryption, daily automated backups, and role-based access controls to ensure your data is always safe. Your data is hosted on secure cloud infrastructure with 99.9% uptime.</p></div></div>
+    <div class="faq-item reveal" onclick="this.classList.toggle('open')"><div class="faq-q">How long does onboarding take? <span class="faq-icon">+</span></div><div class="faq-a"><p>Most SACCOs are fully onboarded and operational within 3–7 days. Our team handles data migration, staff training, and configuration so you can hit the ground running with zero disruption to your operations.</p></div></div>
+    <div class="faq-item reveal" onclick="this.classList.toggle('open')"><div class="faq-q">Do members need smartphones to use SaccoFlow? <span class="faq-icon">+</span></div><div class="faq-a"><p>No. While SaccoFlow has a full mobile portal for smartphone users, members can also receive updates via SMS on any phone. SaccoFlow works for both urban and rural members regardless of device type.</p></div></div>
+    <div class="faq-item reveal" onclick="this.classList.toggle('open')"><div class="faq-q">Is training provided for our staff? <span class="faq-icon">+</span></div><div class="faq-a"><p>Absolutely. All plans include comprehensive staff training — online for Basic and Growth plans, and on-site training for Enterprise customers. We also provide ongoing support via WhatsApp, phone, and email.</p></div></div>
+    <div class="faq-item reveal" onclick="this.classList.toggle('open')"><div class="faq-q">Can SaccoFlow handle multiple branches? <span class="faq-icon">+</span></div><div class="faq-a"><p>Yes. The Enterprise plan is designed for SACCOs with multiple branches, allowing consolidated reporting, branch-level access controls, and centralized member management across all your locations.</p></div></div>
+    <div class="faq-item reveal" onclick="this.classList.toggle('open')"><div class="faq-q">What happens if I need to cancel? <span class="faq-icon">+</span></div><div class="faq-a"><p>You can cancel anytime. We'll provide a full export of all your data in standard formats (Excel/PDF) so you're never locked in. We're confident you won't want to leave once you see the results.</p></div></div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta" id="demo">
+  <div style="position:relative;z-index:1;">
+    <span class="section-tag" style="background: var(--white);color:var(--blue-900);">Get Started Today</span>
+    <h2>Ready to Transform Your SACCO?</h2>
+    <p>Join the next generation of digital SACCOs in Uganda. Your members deserve better. Start with a free, no-pressure demo.</p>
+    <div class="final-ctas">
+      <a href="mailto:saccoflow@gmail.com" class="btn-primary-three">Book My Free Demo Today</a>
+      <a href="tel:+256761255072" class="btn-secondary">Talk to a Specialist</a>
+    </div>
+    <p class="urgency"><strong>Limited onboarding slots available this quarter.</strong> Reserve yours today.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="logo">Sacco<span>Flow</span></div>
+    <p>Built for Ugandan SACCOs · Kampala, Uganda</p>
+    <p class="footer-copy">&copy; 2026 SaccoFlow. All rights reserved.</p>
+  </div>
+
+  <div class="footer-links">
+    <a href="#features">Features</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="mailto:saccoflow@gmail.com">Support</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <div class="footer-right">
+    <div class="footer-social">
+      <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="SaccoFlow on Facebook">
+        <i class="fa-brands fa-facebook-f" id="footer-icon"></i>
+      </a>
+      <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="SaccoFlow on X">
+        <i class="fa-brands fa-x-twitter" id="footer-icon"></i>
+      </a>
+      <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="SaccoFlow on LinkedIn">
+        <i class="fa-brands fa-linkedin-in" id="footer-icon"></i>
+      </a>
+      <a href="https://wa.me/256761255072" target="_blank" rel="noopener noreferrer" aria-label="Chat with SaccoFlow on WhatsApp">
+        <i class="fa-brands fa-whatsapp" id="footer-icon"></i>
+      </a>
+    </div>
+    <div class="footer-meta">
+      <a href="#">Privacy Policy</a>
+      <span>•</span>
+      <a href="#">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<!-- STICKY ELEMENTS -->
+<div class="sticky-cta">
+  <a href="https://wa.me/256761255072" class="wa-btn" target="_blank" title="Chat on WhatsApp">💬</a>
+</div>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+
+  const nav = document.querySelector('nav');
+  const navToggle = document.querySelector('.nav-toggle');
+  if (nav && navToggle) {
+    const closeMobileNav = () => {
+      nav.classList.remove('nav-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    };
+
+    navToggle.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('nav-open');
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    nav.querySelectorAll('.nav-links a, .nav-auth a').forEach(link => {
+      link.addEventListener('click', closeMobileNav);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!nav.contains(e.target)) closeMobileNav();
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) closeMobileNav();
+    });
+  }
+</script>
+</body>
+</html>

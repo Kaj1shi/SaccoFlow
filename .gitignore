@@ -1,0 +1,27 @@
+# Dependencies & build
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Environment / secrets — never commit real credentials
+.env
+.env.*
+!.env.example
+dashboard/.env
+
+# Editor / OS junk
+.vscode/
+.idea/
+.DS_Store
+*~
+.~lock.*
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*

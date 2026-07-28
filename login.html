@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login – SaccoFlow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="saccoflow.css">
+  <script src="https://kit.fontawesome.com/8ec4e20c05.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Sacco<span>Flow</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth">
+      <a href="login.html" class="nav-auth-login">Login</a>
+      <a href="register.html" class="nav-auth-register">Register</a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- LOGIN -->
+  <section class="about-hero-simple">
+    <div class="about-hero-inner" style="max-width:460px;">
+      <span class="section-tag">Login</span>
+      <h1 class="about-hero-title">Welcome back to SaccoFlow.</h1>
+      <p class="about-hero-lead">Sign in to access your SACCO dashboard. If you don't have an account, you can register in a few steps.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <h2>Sign in</h2>
+        <form id="loginForm" class="contact-form">
+          <p id="loginError" style="display:none;background:#fee2e2;border:1px solid #fecaca;color:#b91c1c;border-radius:10px;padding:10px 14px;font-size:0.9rem;margin-bottom:14px;"></p>
+          <div class="form-field">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" name="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-field">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+            <p style="margin:8px 0 0;font-size:0.82rem;">
+              <a href="#" id="forgotLink" style="color:#2f55d4;text-decoration:none;font-weight:600;">Forgot your password?</a>
+            </p>
+          </div>
+          <button type="submit" id="loginBtn" class="btn-primary contact-submit">Login</button>
+          <p class="auth-footnote">Don't have an account? <a href="register.html">Register your SACCO</a>.</p>
+        </form>
+
+        <!-- Forgot password -->
+        <div id="resetBox" style="display:none;margin-top:18px;padding-top:18px;border-top:1px solid #e5e9f0;">
+          <p style="margin:0 0 10px;font-size:0.88rem;color:#617b99;">
+            Enter your account email and we'll send you a password reset link.
+          </p>
+          <p id="resetMsg" style="display:none;border-radius:10px;padding:10px 14px;font-size:0.85rem;margin:0 0 12px;"></p>
+          <div class="form-field">
+            <label for="reset-email">Email</label>
+            <input type="email" id="reset-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <button type="button" id="resetBtn" class="btn-primary contact-submit" style="margin-top:4px;">Send reset link</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">
+      <div class="logo">Sacco<span>Flow</span></div>
+      <p>Built for Ugandan SACCOs · Kampala, Uganda</p>
+      <p class="footer-copy">&copy; 2026 SaccoFlow. All rights reserved.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="index.html#features">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="mailto:saccoflow@gmail.com">Support</a>
+      <a href="contact.html">Contact</a>
+    </div>
+
+    <div class="footer-right">
+      <div class="footer-social">
+        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="SaccoFlow on Facebook">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="SaccoFlow on X">
+          <i class="fa-brands fa-x-twitter"></i>
+        </a>
+        <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="SaccoFlow on LinkedIn">
+          <i class="fa-brands fa-linkedin-in"></i>
+        </a>
+        <a href="https://wa.me/256761255072" target="_blank" rel="noopener noreferrer" aria-label="Chat with SaccoFlow on WhatsApp">
+          <i class="fa-brands fa-whatsapp"></i>
+        </a>
+      </div>
+      <div class="footer-meta">
+        <a href="#">Privacy Policy</a>
+        <span>•</span>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- STICKY ELEMENTS -->
+  <div class="sticky-cta">
+    <a href="https://wa.me/256761255072" class="wa-btn" target="_blank" title="Chat on WhatsApp">💬</a>
+  </div>
+
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/password-ui.js"></script>
+  <script>
+    // ── Password visibility + forgot-password flow ───────────────────────────
+    (function () {
+      window.PasswordUI.attachToggle('login-password');
+
+      var forgotLink = document.getElementById('forgotLink');
+      var resetBox   = document.getElementById('resetBox');
+      var resetEmail = document.getElementById('reset-email');
+      var resetBtn   = document.getElementById('resetBtn');
+      var resetMsg   = document.getElementById('resetMsg');
+
+      function showResetMsg(text, ok) {
+        resetMsg.textContent = text;
+        resetMsg.style.display = 'block';
+        resetMsg.style.background = ok ? '#f0fdf4' : '#fee2e2';
+        resetMsg.style.border = '1px solid ' + (ok ? '#bbf7d0' : '#fecaca');
+        resetMsg.style.color = ok ? '#15803d' : '#b91c1c';
+      }
+
+      forgotLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        var visible = resetBox.style.display !== 'none';
+        resetBox.style.display = visible ? 'none' : 'block';
+        if (!visible) {
+          resetEmail.value = document.getElementById('login-email').value.trim();
+          resetEmail.focus();
+        }
+      });
+
+      resetBtn.addEventListener('click', async function () {
+        var email = resetEmail.value.trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showResetMsg('Please enter a valid email address.', false);
+          return;
+        }
+
+        resetBtn.disabled = true;
+        resetBtn.textContent = 'Sending\u2026';
+
+        try {
+          // The link lands on the dashboard's reset page (must be listed in
+          // Supabase > Authentication > URL Configuration > Redirect URLs)
+          var redirectTo = window.location.origin + '/dashboard/reset-password';
+          var res = await fetch(
+            window.SUPABASE_CONFIG.url + '/auth/v1/recover?redirect_to=' + encodeURIComponent(redirectTo),
+            {
+              method: 'POST',
+              headers: {
+                'apikey': window.SUPABASE_CONFIG.anonKey,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ email: email }),
+            }
+          );
+
+          if (res.ok) {
+            showResetMsg('Reset link sent. Check your inbox (and spam folder) for an email from SaccoFlow.', true);
+          } else {
+            var json = await res.json().catch(function () { return {}; });
+            var msg = json.msg || json.error_description || 'Could not send the reset email. Please try again shortly.';
+            if (/rate limit/i.test(msg)) msg = 'Too many requests \u2014 please wait a few minutes and try again.';
+            showResetMsg(msg, false);
+          }
+        } catch (err) {
+          showResetMsg('Network error \u2014 please check your connection and try again.', false);
+        }
+
+        resetBtn.disabled = false;
+        resetBtn.textContent = 'Send reset link';
+      });
+    })();
+  </script>
+  <script>
+    // ── Login handler ────────────────────────────────────────────────────────
+    // Signs in via Supabase Auth, stores the session in sessionStorage (in the
+    // format supabase-js reads), then hands off to the React dashboard.
+    // sessionStorage is per tab, so each tab can hold a different account.
+    (function () {
+      var DASHBOARD_URL = '/dashboard/'; // must be served from the same origin
+
+      var form   = document.getElementById('loginForm');
+      var btn    = document.getElementById('loginBtn');
+      var errBox = document.getElementById('loginError');
+
+      function showError(msg) {
+        errBox.textContent = msg;
+        errBox.style.display = 'block';
+      }
+
+      function sessionKey() {
+        // Must match dashboard/src/lib/supabase.ts: one key per tab so
+        // supabase-js BroadcastChannel does not sync auth across tabs.
+        var ref = new URL(window.SUPABASE_CONFIG.url).hostname.split('.')[0];
+        var tabId = sessionStorage.getItem('saccoflow-tab-id');
+        if (!tabId) {
+          tabId = (window.crypto && crypto.randomUUID)
+            ? crypto.randomUUID()
+            : String(Date.now()) + '-' + Math.random().toString(36).slice(2);
+          sessionStorage.setItem('saccoflow-tab-id', tabId);
+        }
+        return 'sb-' + ref + '-auth-token-' + tabId;
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        errBox.style.display = 'none';
+        btn.disabled = true;
+        btn.textContent = 'Signing in…';
+
+        try {
+          var email    = document.getElementById('login-email').value.trim();
+          var password = document.getElementById('login-password').value;
+
+          // 1) Authenticate
+          var result = await window.SupabaseClient.auth.signIn(email, password);
+          if (result.error) {
+            var msg = result.error.message || 'Login failed.';
+            if (/invalid login credentials/i.test(msg)) msg = 'Incorrect email or password.';
+            if (/email not confirmed/i.test(msg)) msg = 'Please confirm your email address first — check your inbox.';
+            throw new Error(msg);
+          }
+          var session = result.data;
+
+          // 2) Load the staff profile (authenticated request so RLS allows it)
+          var res = await fetch(
+            window.SUPABASE_CONFIG.url + '/rest/v1/users?id=eq.' + session.user.id +
+              '&select=role,is_active,permissions',
+            {
+              headers: {
+                'apikey': window.SUPABASE_CONFIG.anonKey,
+                'Authorization': 'Bearer ' + session.access_token,
+              },
+            }
+          );
+          var rows = await res.json().catch(function () { return []; });
+          var profile = Array.isArray(rows) ? rows[0] : null;
+
+          if (!profile) throw new Error('Your account has no dashboard profile. Contact support.');
+          if (profile.role === 'member') throw new Error('Member accounts cannot access the staff dashboard.');
+          if (!profile.is_active) throw new Error('Your account is not active yet. It is activated once your SACCO is approved.');
+
+          // 3) Store the session where the dashboard (supabase-js) reads it.
+          //    sessionStorage + tab-specific key = independent accounts per tab.
+          var key = sessionKey();
+          sessionStorage.setItem(key, JSON.stringify(session));
+          // Clear leftovers from older shared-key schemes
+          var ref = new URL(window.SUPABASE_CONFIG.url).hostname.split('.')[0];
+          localStorage.removeItem('sb-' + ref + '-auth-token');
+          sessionStorage.removeItem('sb-' + ref + '-auth-token');
+
+          // 4) Hand off to the dashboard
+          window.location.href = DASHBOARD_URL;
+        } catch (err) {
+          sessionStorage.removeItem(sessionKey());
+          showError(err.message || 'Something went wrong. Please try again.');
+          btn.disabled = false;
+          btn.textContent = 'Login';
+        }
+      });
+    })();
+  </script>
+  <script>
+    const nav = document.querySelector('nav');
+    const navToggle = document.querySelector('.nav-toggle');
+    if (nav && navToggle) {
+      const closeMobileNav = () => {
+        nav.classList.remove('nav-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      };
+
+      navToggle.addEventListener('click', () => {
+        const isOpen = nav.classList.toggle('nav-open');
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      nav.querySelectorAll('.nav-links a, .nav-auth a').forEach(link => {
+        link.addEventListener('click', closeMobileNav);
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!nav.contains(e.target)) closeMobileNav();
+      });
+
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) closeMobileNav();
+      });
+    }
+  </script>
+</body>
+</html>
+

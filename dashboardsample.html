@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaccoFlow – Financial Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0B1F3A;
+    --navy-mid: #132D52;
+    --navy-light: #1C3F72;
+    --blue: #1B6FD8;
+    --blue-bright: #2E8AFF;
+    --blue-soft: #D6E8FF;
+    --blue-faint: #EBF3FF;
+    --green: #0EA568;
+    --green-bg: #E6F9F1;
+    --green-text: #05834F;
+    --red: #E53E3E;
+    --red-bg: #FEF0F0;
+    --red-text: #C53030;
+    --amber: #D97706;
+    --amber-bg: #FFF8E1;
+    --amber-text: #B45309;
+    --bg: #F4F6FA;
+    --card: #FFFFFF;
+    --border: #E2E8F4;
+    --text-primary: #0B1F3A;
+    --text-secondary: #5B6B88;
+    --text-muted: #95A5C0;
+    --sidebar-w: 220px;
+    --topbar-h: 64px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy);
+    height: 100vh;
+    position: fixed;
+    top: 0; left: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar-logo {
+    padding: 20px 20px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, #2E8AFF, #1B6FD8);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .logo-icon svg { width: 18px; height: 18px; }
+
+  .logo-text {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 16px 12px;
+    overflow-y: auto;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: rgba(255,255,255,0.3);
+    padding: 8px 8px 4px;
+    margin-top: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+    font-size: 13.5px;
+    font-weight: 400;
+    text-decoration: none;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+
+  .nav-item.active {
+    background: linear-gradient(135deg, rgba(46,138,255,0.25), rgba(27,111,216,0.15));
+    color: #fff;
+    font-weight: 500;
+    border: 1px solid rgba(46,138,255,0.25);
+  }
+
+  .nav-item.active .nav-icon { color: var(--blue-bright); }
+
+  .nav-icon { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.9; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .sidebar-footer {
+    padding: 12px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .sidebar-user:hover { background: rgba(255,255,255,0.06); }
+
+  .user-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2E8AFF, #1B6FD8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+
+  .user-info { flex: 1; overflow: hidden; }
+  .user-name { font-size: 12.5px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-role { font-size: 11px; color: rgba(255,255,255,0.4); }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    height: var(--topbar-h);
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title { font-size: 16px; font-weight: 600; color: var(--text-primary); flex: 1; }
+  .topbar-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    width: 240px;
+  }
+
+  .search-box input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text-primary);
+    width: 100%;
+  }
+
+  .search-box input::placeholder { color: var(--text-muted); }
+
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+  .icon-btn {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .icon-btn:hover { background: var(--bg); border-color: #C5D0E6; }
+
+  .notif-badge {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 8px; height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    border: 1.5px solid var(--card);
+  }
+
+  .btn-primary {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-primary:hover { background: #1562C5; }
+
+  /* ── PAGE CONTENT ── */
+  .content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+  }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--kpi-accent, var(--blue));
+    border-radius: 12px 12px 0 0;
+  }
+
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,31,58,0.08); }
+
+  .kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+
+  .kpi-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--kpi-icon-bg, var(--blue-faint));
+  }
+
+  .kpi-icon svg { width: 15px; height: 15px; }
+
+  .kpi-trend {
+    display: flex; align-items: center; gap: 3px;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 7px;
+    border-radius: 20px;
+  }
+
+  .trend-up { background: var(--green-bg); color: var(--green-text); }
+  .trend-down { background: var(--red-bg); color: var(--red-text); }
+
+  .kpi-value {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .kpi-label { font-size: 11.5px; color: var(--text-muted); font-weight: 400; }
+
+  /* ── CHARTS ROW ── */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+
+  .charts-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .card-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .filter-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    border-radius: 7px;
+    padding: 3px;
+  }
+
+  .filter-tab {
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .filter-tab.active { background: var(--card); color: var(--blue); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #F0F4FA;
+    transition: background 0.1s;
+    cursor: pointer;
+  }
+
+  tbody tr:hover { background: var(--blue-faint); }
+
+  td { padding: 11px 12px; color: var(--text-primary); }
+
+  .member-cell { display: flex; align-items: center; gap: 9px; }
+
+  .avatar-sm {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+
+  .badge-success { background: var(--green-bg); color: var(--green-text); }
+  .badge-pending { background: var(--amber-bg); color: var(--amber-text); }
+  .badge-failed { background: var(--red-bg); color: var(--red-text); }
+  .badge-deposit { background: var(--blue-faint); color: var(--blue); }
+  .badge-withdrawal { background: #F5F0FF; color: #6B3FA0; }
+  .badge-loan { background: #FFF3E0; color: #E65100; }
+
+  /* ── ALERTS ── */
+  .alert-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .alert-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .alert-item:hover { transform: translateX(2px); }
+
+  .alert-high { background: var(--red-bg); border-color: #FECACA; }
+  .alert-medium { background: var(--amber-bg); border-color: #FDE68A; }
+  .alert-low { background: var(--blue-faint); border-color: var(--blue-soft); }
+
+  .alert-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .alert-high .alert-dot { background: var(--red); }
+  .alert-medium .alert-dot { background: var(--amber); }
+  .alert-low .alert-dot { background: var(--blue); }
+
+  .alert-content { flex: 1; }
+  .alert-title { font-size: 12.5px; font-weight: 600; margin-bottom: 2px; }
+  .alert-high .alert-title { color: var(--red-text); }
+  .alert-medium .alert-title { color: var(--amber-text); }
+  .alert-low .alert-title { color: var(--blue); }
+  .alert-desc { font-size: 11.5px; color: var(--text-secondary); }
+  .alert-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+  .alert-time { font-size: 10.5px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+
+  .risk-pill {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .risk-high { background: var(--red); color: #fff; }
+  .risk-medium { background: var(--amber); color: #fff; }
+  .risk-low { background: var(--blue); color: #fff; }
+
+  /* ── HEALTH SCORE ── */
+  .health-widget {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0 4px;
+  }
+
+  .health-gauge {
+    position: relative;
+    width: 140px; height: 70px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .gauge-track {
+    position: absolute;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    border: 14px solid #EEF3FB;
+    top: 0; left: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+  }
+
+  .gauge-fill {
+    position: absolute;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    border: 14px solid transparent;
+    top: 0; left: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+    border-top-color: var(--green);
+    border-right-color: var(--green);
+    transform: rotate(calc(var(--score, 76) * 1.8deg - 180deg));
+    transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .gauge-center {
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+
+  .gauge-score { font-size: 28px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+  .gauge-max { font-size: 12px; color: var(--text-muted); }
+
+  .health-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green-text);
+    display: flex; align-items: center; gap: 5px;
+    margin-bottom: 12px;
+  }
+
+  .health-bar-list { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+
+  .hbar-item { display: flex; flex-direction: column; gap: 3px; }
+  .hbar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); }
+
+  .hbar-track {
+    height: 5px;
+    background: var(--bg);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .hbar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--blue);
+    transition: width 1s ease;
+  }
+
+  /* ── TOP MEMBERS ── */
+  .member-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .member-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .member-row:hover { background: var(--blue-faint); }
+
+  .member-info { flex: 1; }
+  .member-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .member-id { font-size: 11px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+  .member-amount { font-size: 13px; font-weight: 600; color: var(--text-primary); text-align: right; }
+  .member-type { font-size: 10.5px; color: var(--text-muted); text-align: right; }
+
+  /* ── RESPONSIVE ── */
+  .hamburger {
+    display: none;
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    border-radius: 8px;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 99;
+  }
+
+  @media (max-width: 1200px) {
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 900px) {
+    .charts-row { grid-template-columns: 1fr; }
+    .charts-row-2 { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay.open { display: block; }
+    .main { margin-left: 0; }
+    .hamburger { display: flex; }
+    .search-box { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .content { padding: 14px; gap: 14px; }
+    .btn-primary span { display: none; }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .kpi-card { animation: fadeUp 0.4s ease both; }
+  .kpi-card:nth-child(1) { animation-delay: 0.05s; }
+  .kpi-card:nth-child(2) { animation-delay: 0.1s; }
+  .kpi-card:nth-child(3) { animation-delay: 0.15s; }
+  .kpi-card:nth-child(4) { animation-delay: 0.2s; }
+  .kpi-card:nth-child(5) { animation-delay: 0.25s; }
+  .kpi-card:nth-child(6) { animation-delay: 0.3s; }
+
+  .card { animation: fadeUp 0.5s ease both; animation-delay: 0.3s; }
+
+  /* amount colors */
+  .amount-positive { color: var(--green-text); font-weight: 600; }
+  .amount-negative { color: var(--red-text); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">
+        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 2L14.196 5V11L9 14L3.804 11V5L9 2Z" fill="white" fill-opacity="0.9"/>
+          <path d="M9 5L11.598 6.5V9.5L9 11L6.402 9.5V6.5L9 5Z" fill="#2E8AFF"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">SaccoFlow</div>
+        <div class="logo-sub">Uganda · SACCO OS</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a class="nav-item active" href="#">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"/></svg>
+      Members
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="3" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1 7h14" stroke="currentColor" stroke-width="1.5"/></svg>
+      Accounts
+    </a>
+
+    <div class="nav-section-label">Finance</div>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM7 5h2v4H7V5zm0 5h2v1.5H7V10z"/></svg>
+      Loans
+      <span class="nav-badge">12</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M3 8h10M8 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Transactions
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,11 5,7 9,9 15,3"/><polyline points="11,3 15,3 15,7"/></svg>
+      Reports
+    </a>
+
+    <div class="nav-section-label">Security</div>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4L8 2z"/><path d="M6 8l1.5 1.5L10 6"/></svg>
+      Fraud &amp; Risk
+      <span class="nav-badge">4</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42"/></svg>
+      Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar">AK</div>
+      <div class="user-info">
+        <div class="user-name">Amara Kigozi</div>
+        <div class="user-role">SACCO Manager</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><path d="M3 5l4 4 4-4"/></svg>
+    </div>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+    </button>
+
+    <div>
+      <div class="topbar-title">Dashboard Overview</div>
+      <div class="topbar-subtitle">Friday, 17 April 2026 · FY2025–26 Q4</div>
+    </div>
+
+    <div class="search-box">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#95A5C0" stroke-width="1.5"><circle cx="6" cy="6" r="4"/><path d="M9.5 9.5L13 13"/></svg>
+      <input type="text" placeholder="Search members, transactions…">
+    </div>
+
+    <div class="topbar-actions">
+      <div class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7.5 2a4.5 4.5 0 014.5 4.5c0 2.5.5 4 1 5H2c.5-1 1-2.5 1-5A4.5 4.5 0 017.5 2zM6 12.5a1.5 1.5 0 003 0"/></svg>
+        <div class="notif-badge"></div>
+      </div>
+      <div class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7.5" cy="5.5" r="2.5"/><path d="M2 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/></svg>
+      </div>
+      <button class="btn-primary">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="white" stroke-width="2"><path d="M6.5 1v11M1 6.5h11"/></svg>
+        <span>New Transaction</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="content">
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+
+      <div class="kpi-card" style="--kpi-accent:#1B6FD8; --kpi-icon-bg:#EBF3FF;">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 15 15" fill="none" stroke="#1B6FD8" stroke-width="1.5"><rect x="1" y="3" width="13" height="9" rx="2"/><path d="M4 9h3M10 9h1"/></svg>
+          </div>
+          <div class="kpi-trend trend-up">↑ 8.3%</div>
+        </div>
+        <div class="kpi-value">UGX 2.84B</div>
+        <div class="kpi-label">Total Savings</div>
+      </div>
+
+      <div class="kpi-card" style="--kpi-accent:#8B5CF6; --kpi-icon-bg:#F3EFFE;">
+        <div class="kpi-header">
+          <div class="kpi-icon" style="background:#F3EFFE;">
+            <svg viewBox="0 0 15 15" fill="none" stroke="#8B5CF6" stroke-width="1.5"><path d="M7.5 2v11M2 7.5h11"/><circle cx="7.5" cy="7.5" r="6"/></svg>
+          </div>
+          <div class="kpi-trend trend-up">↑ 14.1%</div>
+        </div>
+        <div class="kpi-value">UGX 1.29B</div>
+        <div class="kpi-label">Total Loans Issued</div>
+      </div>
+
+      <div class="kpi-card" style="--kpi-accent:#0EA568; --kpi-icon-bg:#E6F9F1;">
+        <div class="kpi-header">
+          <div class="kpi-icon" style="background:#E6F9F1;">
+            <svg viewBox="0 0 15 15" fill="none" stroke="#0EA568" stroke-width="1.5"><rect x="2" y="4" width="11" height="8" rx="1.5"/><path d="M5 4V3a2.5 2.5 0 015 0v1"/><circle cx="7.5" cy="8" r="1.5"/></svg>
+          </div>
+          <div class="kpi-trend trend-down">↓ 2.1%</div>
+        </div>
+        <div class="kpi-value">UGX 823M</div>
+        <div class="kpi-label">Cash Available</div>
+      </div>
+
+      <div class="kpi-card" style="--kpi-accent:#F59E0B; --kpi-icon-bg:#FFF8E1;">
+        <div class="kpi-header">
+          <div class="kpi-icon" style="background:#FFF8E1;">
+            <svg viewBox="0 0 15 15" fill="none" stroke="#F59E0B" stroke-width="1.5"><polyline points="2,10 5,6 8,8 13,3"/><polyline points="10,3 13,3 13,6"/></svg>
+          </div>
+          <div class="kpi-trend trend-up">↑ 3.6%</div>
+        </div>
+        <div class="kpi-value">91.4%</div>
+        <div class="kpi-label">Repayment Rate</div>
+      </div>
+
+      <div class="kpi-card" style="--kpi-accent:#06B6D4; --kpi-icon-bg:#E0F9FF;">
+        <div class="kpi-header">
+          <div class="kpi-icon" style="background:#E0F9FF;">
+            <svg viewBox="0 0 15 15" fill="none" stroke="#06B6D4" stroke-width="1.5"><circle cx="5" cy="5" r="2"/><circle cx="10.5" cy="5" r="2"/><path d="M1 14c0-2.2 1.8-4 4-4M10.5 9c2.2 0 4 1.8 4 4M6 10.5c.5-.3 1-.5 1.5-.5s1 .2 1.5.5"/></svg>
+          </div>
+          <div class="kpi-trend trend-up">↑ 6.2%</div>
+        </div>
+        <div class="kpi-value">4,812</div>
+        <div class="kpi-label">Active Members</div>
+      </div>
+
+      <div class="kpi-card" style="--kpi-accent:#E53E3E; --kpi-icon-bg:#FEF0F0;">
+        <div class="kpi-header">
+          <div class="kpi-icon" style="background:#FEF0F0;">
+            <svg viewBox="0 0 15 15" fill="none" stroke="#E53E3E" stroke-width="1.5"><path d="M7.5 2v5M7.5 10v.5"/><circle cx="7.5" cy="7.5" r="6"/></svg>
+          </div>
+          <div class="kpi-trend trend-down">↓ 1.2%</div>
+        </div>
+        <div class="kpi-value">8.6%</div>
+        <div class="kpi-label">Default Rate</div>
+      </div>
+
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="charts-row">
+
+      <!-- Cash Flow Line Chart -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Cash Flow Analysis</div>
+            <div class="card-subtitle">Inflows vs Outflows · UGX (Millions)</div>
+          </div>
+          <div class="filter-tabs">
+            <button class="filter-tab" onclick="setFilter('daily',this)">Daily</button>
+            <button class="filter-tab active" onclick="setFilter('weekly',this)">Weekly</button>
+            <button class="filter-tab" onclick="setFilter('monthly',this)">Monthly</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:#5B6B88;">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:24px;height:3px;background:#1B6FD8;border-radius:2px;display:inline-block;"></span>Inflow</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:24px;height:3px;background:#E53E3E;border-radius:2px;display:inline-block;border-top:1px dashed #E53E3E;"></span>Outflow</span>
+        </div>
+        <div style="position:relative;width:100%;height:220px;">
+          <canvas id="cashFlowChart" role="img" aria-label="Line chart showing weekly cash inflows and outflows in UGX millions over 12 weeks">Weekly cash flow data showing inflows ranging 180-390M UGX and outflows 140-290M UGX.</canvas>
+        </div>
+      </div>
+
+      <!-- Savings vs Loans Donut -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Funds Distribution</div>
+            <div class="card-subtitle">Savings vs Active Loans</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-bottom:12px;font-size:12px;color:#5B6B88;">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:#1B6FD8;border-radius:2px;"></span>Savings 68.8%</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:#8B5CF6;border-radius:2px;"></span>Loans 31.2%</span>
+        </div>
+        <div style="position:relative;width:100%;height:190px;display:flex;align-items:center;justify-content:center;">
+          <canvas id="donutChart" role="img" aria-label="Donut chart showing 68.8% savings and 31.2% active loans">Savings: UGX 2.84B (68.8%), Active Loans: UGX 1.29B (31.2%).</canvas>
+          <div style="position:absolute;text-align:center;pointer-events:none;">
+            <div style="font-size:17px;font-weight:700;color:#0B1F3A;">UGX 4.13B</div>
+            <div style="font-size:11px;color:#95A5C0;">Total Funds</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="charts-row-2">
+
+      <!-- Loan Distribution Bar Chart -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Loan Disbursements</div>
+            <div class="card-subtitle">Monthly · UGX Millions</div>
+          </div>
+          <div style="display:flex;gap:12px;font-size:12px;color:#5B6B88;">
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:#1B6FD8;border-radius:2px;"></span>Issued</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:#0EA568;border-radius:2px;"></span>Repaid</span>
+          </div>
+        </div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="loanBarChart" role="img" aria-label="Bar chart comparing monthly loan issuances and repayments in UGX millions">Loan disbursement data over 6 months.</canvas>
+        </div>
+      </div>
+
+      <!-- Recent Transactions Table -->
+      <div class="card" style="overflow:hidden;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Recent Transactions</div>
+            <div class="card-subtitle">Last 24 hours</div>
+          </div>
+          <a href="#" style="font-size:12px;color:var(--blue);text-decoration:none;font-weight:500;">View all →</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="member-cell"><div class="avatar-sm" style="background:#1B6FD8;">RK</div><span>Ronah Kyomuhendo</span></div></td>
+                <td><span class="status-badge badge-deposit">Deposit</span></td>
+                <td class="amount-positive">+2,500,000</td>
+                <td><span class="status-badge badge-success">● Done</span></td>
+              </tr>
+              <tr>
+                <td><div class="member-cell"><div class="avatar-sm" style="background:#8B5CF6;">BM</div><span>Brian Mwesigwa</span></div></td>
+                <td><span class="status-badge badge-loan">Loan Pay</span></td>
+                <td class="amount-positive">+850,000</td>
+                <td><span class="status-badge badge-success">● Done</span></td>
+              </tr>
+              <tr>
+                <td><div class="member-cell"><div class="avatar-sm" style="background:#0EA568;">FN</div><span>Florence Nakato</span></div></td>
+                <td><span class="status-badge badge-withdrawal">Withdraw</span></td>
+                <td class="amount-negative">-1,200,000</td>
+                <td><span class="status-badge badge-pending">● Pending</span></td>
+              </tr>
+              <tr>
+                <td><div class="member-cell"><div class="avatar-sm" style="background:#F59E0B;">JO</div><span>James Okello</span></div></td>
+                <td><span class="status-badge badge-deposit">Deposit</span></td>
+                <td class="amount-positive">+5,000,000</td>
+                <td><span class="status-badge badge-success">● Done</span></td>
+              </tr>
+              <tr>
+                <td><div class="member-cell"><div class="avatar-sm" style="background:#E53E3E;">NA</div><span>Nora Asiimwe</span></div></td>
+                <td><span class="status-badge badge-loan">Loan</span></td>
+                <td class="amount-negative">-8,500,000</td>
+                <td><span class="status-badge badge-failed">● Failed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Row: Risk Alerts + Top Members + Health Score -->
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 0.8fr;gap:16px;" id="bottomGrid">
+
+      <!-- Risk & Fraud Alerts -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title" style="display:flex;align-items:center;gap:7px;">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#E53E3E" stroke-width="1.5"><path d="M7 1.5L13 12H1L7 1.5z"/><path d="M7 5.5v3M7 10v.5"/></svg>
+              Risk &amp; Fraud Alerts
+            </div>
+            <div class="card-subtitle">4 active alerts require attention</div>
+          </div>
+          <span style="font-size:11px;font-weight:600;background:var(--red-bg);color:var(--red-text);padding:3px 9px;border-radius:20px;">4 Active</span>
+        </div>
+        <div class="alert-list">
+
+          <div class="alert-item alert-high">
+            <div class="alert-dot"></div>
+            <div class="alert-content">
+              <div class="alert-title">Abnormal withdrawal spike detected</div>
+              <div class="alert-desc">Member #SF-4821 · UGX 18,000,000 withdrawn across 3 rapid transactions</div>
+              <div class="alert-meta">
+                <span class="alert-time">Today 09:14</span>
+                <span class="risk-pill risk-high">High</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert-item alert-high">
+            <div class="alert-dot"></div>
+            <div class="alert-content">
+              <div class="alert-title">Loan default risk — 90+ days overdue</div>
+              <div class="alert-desc">Member #SF-2034 · Outstanding: UGX 4,500,000 · No payment in 94 days</div>
+              <div class="alert-meta">
+                <span class="alert-time">Yesterday</span>
+                <span class="risk-pill risk-high">High</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert-item alert-medium">
+            <div class="alert-dot"></div>
+            <div class="alert-content">
+              <div class="alert-title">Unusual login location — new device</div>
+              <div class="alert-desc">Admin account accessed from unrecognised IP · Nairobi, KE</div>
+              <div class="alert-meta">
+                <span class="alert-time">Today 06:31</span>
+                <span class="risk-pill risk-medium">Medium</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert-item alert-low">
+            <div class="alert-dot"></div>
+            <div class="alert-content">
+              <div class="alert-title">3 loans approaching repayment deadline</div>
+              <div class="alert-desc">Due within 7 days · Total exposure UGX 6,800,000</div>
+              <div class="alert-meta">
+                <span class="alert-time">Today</span>
+                <span class="risk-pill risk-low">Low</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Top Members -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Top Savers</div>
+            <div class="card-subtitle">This quarter · by contribution</div>
+          </div>
+          <a href="#" style="font-size:12px;color:var(--blue);text-decoration:none;font-weight:500;">View all</a>
+        </div>
+        <div class="member-list">
+          <div class="member-row">
+            <div class="avatar-sm" style="background:linear-gradient(135deg,#1B6FD8,#8B5CF6);font-size:11px;">RK</div>
+            <div class="member-info">
+              <div class="member-name">Ronah Kyomuhendo</div>
+              <div class="member-id">SF-1021 · Kampala</div>
+            </div>
+            <div>
+              <div class="member-amount">24.5M</div>
+              <div class="member-type">UGX savings</div>
+            </div>
+          </div>
+          <div class="member-row">
+            <div class="avatar-sm" style="background:linear-gradient(135deg,#0EA568,#06B6D4);font-size:11px;">GT</div>
+            <div class="member-info">
+              <div class="member-name">Grace Tumusiime</div>
+              <div class="member-id">SF-0872 · Entebbe</div>
+            </div>
+            <div>
+              <div class="member-amount">19.8M</div>
+              <div class="member-type">UGX savings</div>
+            </div>
+          </div>
+          <div class="member-row">
+            <div class="avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#E53E3E);font-size:11px;">JM</div>
+            <div class="member-info">
+              <div class="member-name">Joseph Mugerwa</div>
+              <div class="member-id">SF-0341 · Jinja</div>
+            </div>
+            <div>
+              <div class="member-amount">17.2M</div>
+              <div class="member-type">UGX savings</div>
+            </div>
+          </div>
+          <div class="member-row">
+            <div class="avatar-sm" style="background:linear-gradient(135deg,#8B5CF6,#EC4899);font-size:11px;">CN</div>
+            <div class="member-info">
+              <div class="member-name">Christine Nabirye</div>
+              <div class="member-id">SF-1189 · Mukono</div>
+            </div>
+            <div>
+              <div class="member-amount">15.6M</div>
+              <div class="member-type">UGX savings</div>
+            </div>
+          </div>
+          <div class="member-row">
+            <div class="avatar-sm" style="background:linear-gradient(135deg,#06B6D4,#1B6FD8);font-size:11px;">DK</div>
+            <div class="member-info">
+              <div class="member-name">David Kasirye</div>
+              <div class="member-id">SF-0614 · Wakiso</div>
+            </div>
+            <div>
+              <div class="member-amount">14.1M</div>
+              <div class="member-type">UGX savings</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SACCO Health Score -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">SACCO Health Score</div>
+            <div class="card-subtitle">Overall financial health</div>
+          </div>
+        </div>
+        <div class="health-widget">
+          <div class="health-gauge">
+            <div class="gauge-track"></div>
+            <div class="gauge-fill" style="--score:76;"></div>
+            <div class="gauge-center">
+              <div class="gauge-score">76</div>
+              <div class="gauge-max">/100</div>
+            </div>
+          </div>
+          <div class="health-label">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#0EA568" stroke-width="1.5"><circle cx="7" cy="7" r="5.5"/><path d="M4.5 7l2 2L9.5 5"/></svg>
+            Healthy SACCO
+          </div>
+          <div class="health-bar-list">
+            <div class="hbar-item">
+              <div class="hbar-label"><span>Liquidity</span><span style="font-weight:600;">88%</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:88%;background:#1B6FD8;"></div></div>
+            </div>
+            <div class="hbar-item">
+              <div class="hbar-label"><span>Repayment</span><span style="font-weight:600;">91%</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:91%;background:#0EA568;"></div></div>
+            </div>
+            <div class="hbar-item">
+              <div class="hbar-label"><span>Growth</span><span style="font-weight:600;">72%</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:72%;background:#8B5CF6;"></div></div>
+            </div>
+            <div class="hbar-item">
+              <div class="hbar-label"><span>Risk Mgmt</span><span style="font-weight:600;">64%</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:64%;background:#F59E0B;"></div></div>
+            </div>
+            <div class="hbar-item">
+              <div class="hbar-label"><span>Compliance</span><span style="font-weight:600;">95%</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:95%;background:#0EA568;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+
+function setFilter(type, btn) {
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  updateCashFlow(type);
+}
+
+const cashFlowData = {
+  weekly: {
+    labels: ['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6','Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12'],
+    inflow:  [210,285,240,310,275,390,340,285,320,355,300,380],
+    outflow: [160,195,180,220,165,240,210,190,215,230,195,250]
+  },
+  daily: {
+    labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    inflow:  [68,92,85,110,130,55,40],
+    outflow: [45,62,70,88,95,42,28]
+  },
+  monthly: {
+    labels: ['Oct','Nov','Dec','Jan','Feb','Mar','Apr'],
+    inflow:  [820,960,880,1050,930,1120,980],
+    outflow: [610,720,665,780,710,840,725]
+  }
+};
+
+let cashFlowChart;
+function initCashFlow() {
+  const ctx = document.getElementById('cashFlowChart').getContext('2d');
+  const d = cashFlowData.weekly;
+  cashFlowChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: d.labels,
+      datasets: [
+        {
+          label: 'Inflow',
+          data: d.inflow,
+          borderColor: '#1B6FD8',
+          backgroundColor: 'rgba(27,111,216,0.07)',
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.45,
+          pointRadius: 3,
+          pointBackgroundColor: '#1B6FD8'
+        },
+        {
+          label: 'Outflow',
+          data: d.outflow,
+          borderColor: '#E53E3E',
+          backgroundColor: 'rgba(229,62,62,0.04)',
+          borderWidth: 2,
+          borderDash: [5,3],
+          fill: true,
+          tension: 0.45,
+          pointRadius: 3,
+          pointBackgroundColor: '#E53E3E'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `UGX ${ctx.parsed.y}M`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(0,0,0,0.04)' },
+          ticks: { font: { family: 'DM Sans', size: 11 }, color: '#95A5C0' }
+        },
+        y: {
+          grid: { color: 'rgba(0,0,0,0.04)' },
+          ticks: {
+            font: { family: 'DM Sans', size: 11 }, color: '#95A5C0',
+            callback: v => v + 'M'
+          }
+        }
+      }
+    }
+  });
+}
+
+function updateCashFlow(type) {
+  const d = cashFlowData[type];
+  cashFlowChart.data.labels = d.labels;
+  cashFlowChart.data.datasets[0].data = d.inflow;
+  cashFlowChart.data.datasets[1].data = d.outflow;
+  cashFlowChart.update('active');
+}
+
+function initDonut() {
+  const ctx = document.getElementById('donutChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Total Savings', 'Active Loans'],
+      datasets: [{
+        data: [2840, 1290],
+        backgroundColor: ['#1B6FD8', '#8B5CF6'],
+        borderWidth: 0,
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '72%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `UGX ${ctx.parsed.toLocaleString()}M`
+          }
+        }
+      }
+    }
+  });
+}
+
+function initLoanBar() {
+  const ctx = document.getElementById('loanBarChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Nov','Dec','Jan','Feb','Mar','Apr'],
+      datasets: [
+        {
+          label: 'Issued',
+          data: [185, 220, 195, 240, 210, 265],
+          backgroundColor: '#1B6FD8',
+          borderRadius: 5,
+          barPercentage: 0.6
+        },
+        {
+          label: 'Repaid',
+          data: [165, 198, 182, 221, 196, 240],
+          backgroundColor: '#0EA568',
+          borderRadius: 5,
+          barPercentage: 0.6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `UGX ${ctx.parsed.y}M`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'DM Sans', size: 11 }, color: '#95A5C0' }
+        },
+        y: {
+          grid: { color: 'rgba(0,0,0,0.04)' },
+          ticks: {
+            font: { family: 'DM Sans', size: 11 }, color: '#95A5C0',
+            callback: v => v + 'M'
+          }
+        }
+      }
+    }
+  });
+}
+
+// Responsive bottom grid
+function updateBottomGrid() {
+  const grid = document.getElementById('bottomGrid');
+  if (window.innerWidth < 900) {
+    grid.style.gridTemplateColumns = '1fr';
+  } else if (window.innerWidth < 1200) {
+    grid.style.gridTemplateColumns = '1fr 1fr';
+  } else {
+    grid.style.gridTemplateColumns = '1.4fr 1fr 0.8fr';
+  }
+}
+
+window.addEventListener('resize', updateBottomGrid);
+updateBottomGrid();
+
+initCashFlow();
+initDonut();
+initLoanBar();
+</script>
+</body>
+</html>
