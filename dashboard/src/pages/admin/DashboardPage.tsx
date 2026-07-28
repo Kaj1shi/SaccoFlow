@@ -61,7 +61,7 @@ export default function DashboardPage() {
             .eq('status', 'active'),
           supabase
             .from('loans')
-            .select('balance, members!inner(institution_id)')
+            .select('balance, members!member_id!inner(institution_id)')
             .eq('members.institution_id', instId)
             .in('status', ['in_progress', 'overdue', 'approved']),
           supabase

@@ -58,7 +58,7 @@ export default function ReportsPage() {
           .gte('transaction_date', start.toISOString()),
         supabase
           .from('loans')
-          .select('loan_type, principal_amount, members!inner(institution_id)')
+          .select('loan_type, principal_amount, members!member_id!inner(institution_id)')
           .eq('members.institution_id', instId),
         supabase
           .from('members')

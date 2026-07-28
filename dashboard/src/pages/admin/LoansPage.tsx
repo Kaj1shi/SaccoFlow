@@ -43,7 +43,8 @@ export default function LoansPage() {
     const [loanRes, memRes] = await Promise.all([
       supabase
         .from('loans')
-        .select('*, members!inner(first_name,last_name,member_number,institution_id)')
+        // Disambiguate: loans has both member_id and guarantor_id → members
+        .select('*, members!member_id!inner(first_name,last_name,member_number,institution_id)')
         .eq('members.institution_id', profile.institution_id)
         .order('created_at', { ascending: false }),
       supabase

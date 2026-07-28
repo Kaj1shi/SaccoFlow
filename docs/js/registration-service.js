@@ -88,27 +88,47 @@
           }
         }
 
-        var authUser = authResult.data && authResult.data.user;
+        var authUser = authResult.data && (authResult.data.user || authResult.data);
+        // GoTrue sometimes returns the user object at the top level; other
+        // times under .user. Normalize to an object that has .id.
+        if (authUser && !authUser.id && authResult.data && authResult.data.id) {
+          authUser = authResult.data;
+        }
+
+        if (!authUser || !authUser.id) {
+          await db.delete('institutions', 'id=eq.' + institution.id);
+          throw new Error(
+            'Registration created your SACCO but Auth did not return a user id ' +
+            '(often caused by email confirmation / rate limits). Please try again or contact support.'
+          );
+        }
 
         // ── Step 3: Insert public profile row ────────────────────────────────
         // REQUIRED: without this row the user cannot access the dashboard
         // ("Your account has no dashboard profile").
-        if (authUser && authUser.id) {
-          var nameParts = (formData.contactPerson || '').trim().split(/\s+/);
-          var profileResult = await db.insert('users', {
-            id:             authUser.id,
-            institution_id: institution.id,
-            email:          formData.email,
-            password_hash:  'supabase_auth', // real auth lives in auth.users; column is NOT NULL
-            first_name:     nameParts[0] || 'Admin',
-            last_name:      nameParts.slice(1).join(' ') || '',
-            phone:          formData.phone,
-            role:           'admin',
-            is_active:      false, // activated when the SACCO is approved
-          }, { single: true });
+        // A DB trigger (handle_new_auth_user) also creates this row; the
+        // explicit insert keeps older databases working and fails loudly.
+        var nameParts = (formData.contactPerson || '').trim().split(/\s+/);
+        var profileResult = await db.insert('users', {
+          id:             authUser.id,
+          institution_id: institution.id,
+          email:          formData.email,
+          password_hash:  'supabase_auth', // real auth lives in auth.users; column is NOT NULL
+          first_name:     nameParts[0] || 'Admin',
+          last_name:      nameParts.slice(1).join(' ') || '',
+          phone:          formData.phone,
+          role:           'admin',
+          is_active:      false, // activated when the SACCO is approved
+        }, { single: true });
 
-          if (profileResult.error) {
+        if (profileResult.error) {
+          // Duplicate from the trigger is fine (23505); anything else is fatal.
+          var code = String(profileResult.error.code || '');
+          var msg  = String(profileResult.error.message || '');
+          if (code !== '23505' && msg.toLowerCase().indexOf('duplicate') === -1) {
             console.error('[RegistrationService] Profile insert FAILED:', profileResult.error.message);
+            // Roll back institution so we don't leave an orphan SACCO with no login.
+            await db.delete('institutions', 'id=eq.' + institution.id);
             throw new Error(
               'Your account was created but its dashboard profile could not be saved (' +
               profileResult.error.message +

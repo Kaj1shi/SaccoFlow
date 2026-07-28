@@ -99,9 +99,41 @@ export default function RegistrationsPage() {
       return
     }
 
-    // Activate the SACCO's users alongside approval
+    // Activate / create the SACCO's admin profile alongside approval.
+    // ensure_institution_admin_profile backfills public.users from auth.users
+    // when registration left an orphan institution with no dashboard profile.
     if (!error && status === 'active') {
-      await supabase.from('users').update({ is_active: true }).eq('institution_id', inst.id)
+      const { data: ensured, error: ensureErr } = await supabase.rpc(
+        'ensure_institution_admin_profile',
+        { p_institution_id: inst.id }
+      )
+      if (ensureErr) {
+        // Fall back to a plain activate if the RPC isn't installed yet
+        await supabase.from('users').update({ is_active: true }).eq('institution_id', inst.id)
+        setBusyId(null)
+        setError(
+          `SACCO activated, but the admin profile could not be ensured (${ensureErr.message}). ` +
+            'Run supabase/schemas/auth-user-profile-trigger.sql, then ask the admin to try logging in again.'
+        )
+        setSelected(null)
+        load()
+        return
+      }
+      if (ensured && ensured.ok === false && ensured.reason === 'no_auth_user') {
+        setBusyId(null)
+        setError(
+          `SACCO activated, but no Auth login exists for ${ensured.email || 'this email'}. ` +
+            'They must register again (or you must create their Auth user) before they can sign in.'
+        )
+        setSelected(null)
+        load()
+        return
+      }
+    }
+
+    if (!error && status !== 'active') {
+      // Suspend / deactivate staff for this SACCO
+      await supabase.from('users').update({ is_active: false }).eq('institution_id', inst.id)
     }
 
     setBusyId(null)
