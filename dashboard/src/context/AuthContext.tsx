@@ -24,7 +24,7 @@ async function loadProfile(userId: string): Promise<{
   const { data: profile } = await supabase
     .from('users')
     .select(
-      'id, institution_id, branch_id, email, first_name, last_name, phone, role, is_active, permissions'
+      'id, institution_id, branch_id, member_id, email, first_name, last_name, phone, role, is_active, permissions'
     )
     .eq('id', userId)
     .maybeSingle()
@@ -91,10 +91,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!profile) {
       await supabase.auth.signOut()
       return 'Your account has no dashboard profile. Contact your administrator.'
-    }
-    if (profile.role === 'member') {
-      await supabase.auth.signOut()
-      return 'Member accounts cannot access the staff dashboard.'
     }
     if (!profile.is_active) {
       await supabase.auth.signOut()

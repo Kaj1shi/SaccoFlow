@@ -3,6 +3,7 @@ import { Plus, Search } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { formatDate, fullName, genRef } from '../../lib/format'
+import { inviteMemberPortal } from '../../lib/memberInvite'
 import {
   EmptyState,
   ErrorNote,
@@ -21,6 +22,7 @@ export default function MembersPage() {
   const [members, setMembers] = useState<Member[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [info, setInfo] = useState('')
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<(typeof STATUS_FILTERS)[number]>('all')
   const [showAdd, setShowAdd] = useState(false)
@@ -72,29 +74,52 @@ export default function MembersPage() {
   const handleAdd = async (e: FormEvent) => {
     e.preventDefault()
     if (!profile || saving) return
+
+    const email = form.email.trim().toLowerCase()
+    if (!email) {
+      setError('Email is required so the member can receive a portal invite.')
+      return
+    }
+
     setSaving(true)
     setError('')
+    setInfo('')
 
-    const { error } = await supabase.from('members').insert({
-      institution_id: profile.institution_id,
-      member_number: genRef('MEM'),
-      first_name: form.first_name.trim(),
-      last_name: form.last_name.trim(),
-      gender: form.gender,
-      date_of_birth: form.date_of_birth,
+    const { data: created, error } = await supabase
+      .from('members')
+      .insert({
+        institution_id: profile.institution_id,
+        member_number: genRef('MEM'),
+        first_name: form.first_name.trim(),
+        last_name: form.last_name.trim(),
+        gender: form.gender,
+        date_of_birth: form.date_of_birth,
+        phone: form.phone.trim() || null,
+        email,
+        national_id: form.national_id.trim() || null,
+        address: form.address.trim() || null,
+        status: 'active',
+        created_by: profile.id,
+      })
+      .select('*')
+      .single()
+
+    if (error || !created) {
+      setSaving(false)
+      setError(error?.message || 'Could not create member.')
+      return
+    }
+
+    const invite = await inviteMemberPortal({
+      memberId: created.id,
+      institutionId: profile.institution_id,
+      email,
+      firstName: form.first_name.trim(),
+      lastName: form.last_name.trim(),
       phone: form.phone.trim() || null,
-      email: form.email.trim() || null,
-      national_id: form.national_id.trim() || null,
-      address: form.address.trim() || null,
-      status: 'active',
-      created_by: profile.id,
     })
 
     setSaving(false)
-    if (error) {
-      setError(error.message)
-      return
-    }
     setShowAdd(false)
     setForm({
       first_name: '',
@@ -106,6 +131,14 @@ export default function MembersPage() {
       national_id: '',
       address: '',
     })
+
+    if (invite.ok) {
+      setInfo(
+        `Member added. An invite email was sent to ${email} so they can set a password and open their portal.`
+      )
+    } else {
+      setError(`Member was saved, but the portal invite failed: ${invite.error}`)
+    }
     load()
   }
 
@@ -121,7 +154,7 @@ export default function MembersPage() {
     <div>
       <PageHeader
         title="Members"
-        subtitle={`${members.length} registered member${members.length === 1 ? '' : 's'}`}
+        subtitle={`${members.length} registered member${members.length === 1 ? '' : 's'} · email invite opens their portal`}
         actions={
           <button type="button" className="btn-primary" onClick={() => setShowAdd(true)}>
             <Plus className="h-4 w-4" /> Add member
@@ -130,6 +163,11 @@ export default function MembersPage() {
       />
 
       {error && <ErrorNote message={error} />}
+      {info && (
+        <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          {info}
+        </div>
+      )}
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <div className="relative min-w-56 flex-1 sm:max-w-xs">
@@ -207,6 +245,10 @@ export default function MembersPage() {
 
       <Modal open={showAdd} title="Add new member" onClose={() => setShowAdd(false)} wide>
         <form onSubmit={handleAdd} className="grid gap-4 sm:grid-cols-2">
+          <p className="text-sm text-slate-500 sm:col-span-2">
+            Email is required. We create their portal login and send an invite so they can set a
+            password.
+          </p>
           <div>
             <label className="label">First name *</label>
             <input
@@ -257,10 +299,11 @@ export default function MembersPage() {
             />
           </div>
           <div>
-            <label className="label">Email</label>
+            <label className="label">Email *</label>
             <input
               type="email"
               className="input"
+              required
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
@@ -286,7 +329,7 @@ export default function MembersPage() {
               Cancel
             </button>
             <button type="submit" className="btn-primary" disabled={saving}>
-              {saving ? 'Saving…' : 'Add member'}
+              {saving ? 'Adding & inviting…' : 'Add member & send invite'}
             </button>
           </div>
         </form>

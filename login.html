@@ -264,8 +264,12 @@
           var profile = Array.isArray(rows) ? rows[0] : null;
 
           if (!profile) throw new Error('Your account has no dashboard profile. Contact support.');
-          if (profile.role === 'member') throw new Error('Member accounts cannot access the staff dashboard.');
-          if (!profile.is_active) throw new Error('Your account is not active yet. It is activated once your SACCO is approved.');
+          if (!profile.is_active) {
+            if (profile.role === 'member') {
+              throw new Error('Your member account is deactivated. Contact your SACCO.');
+            }
+            throw new Error('Your account is not active yet. It is activated once your SACCO is approved.');
+          }
 
           // 3) Store the session where the dashboard (supabase-js) reads it.
           //    sessionStorage + tab-specific key = independent accounts per tab.

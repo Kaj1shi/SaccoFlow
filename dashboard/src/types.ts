@@ -4,6 +4,7 @@ export interface Profile {
   id: string
   institution_id: string
   branch_id: string | null
+  member_id: string | null
   email: string
   first_name: string
   last_name: string

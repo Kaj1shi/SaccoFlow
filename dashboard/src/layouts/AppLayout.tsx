@@ -45,6 +45,10 @@ const superNav: NavItem[] = [
   { to: '/super/audit', label: 'Audit Logs', icon: <ClipboardList className="h-5 w-5" /> },
 ]
 
+const memberNav: NavItem[] = [
+  { to: '/member', label: 'My dashboard', icon: <LayoutDashboard className="h-5 w-5" />, end: true },
+]
+
 const navItemClass = ({ isActive }: { isActive: boolean }) =>
   [
     'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition',
@@ -121,15 +125,21 @@ function SidebarContent({
   )
 }
 
-export default function AppLayout({ variant }: { variant: 'admin' | 'super' }) {
+export default function AppLayout({ variant }: { variant: 'admin' | 'super' | 'member' }) {
   const { profile, institution, signOut } = useAuth()
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
 
-  const items = variant === 'super' ? superNav : adminNav
-  const accountTo = variant === 'super' ? '/super/account' : '/account'
-  const brandSub = variant === 'super' ? 'Platform Console' : (institution?.name ?? 'SACCO Dashboard')
+  const items = variant === 'super' ? superNav : variant === 'member' ? memberNav : adminNav
+  const accountTo =
+    variant === 'super' ? '/super/account' : variant === 'member' ? '/member/account' : '/account'
+  const brandSub =
+    variant === 'super'
+      ? 'Platform Console'
+      : variant === 'member'
+        ? 'Member portal'
+        : (institution?.name ?? 'SACCO Dashboard')
   const name = profile ? `${profile.first_name} ${profile.last_name}` : ''
 
   const isDesktop = () => window.matchMedia('(min-width: 1024px)').matches
@@ -150,7 +160,6 @@ export default function AppLayout({ variant }: { variant: 'admin' | 'super' }) {
 
   return (
     <div className="flex h-full">
-      {/* Desktop sidebar — dark navy, matching the website's nav */}
       {!collapsed && (
         <aside className="hidden w-64 shrink-0 bg-brand-900 lg:block">
           <SidebarContent
@@ -163,7 +172,6 @@ export default function AppLayout({ variant }: { variant: 'admin' | 'super' }) {
         </aside>
       )}
 
-      {/* Mobile drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-slate-900/40" onClick={() => setMobileOpen(false)} />
@@ -180,7 +188,6 @@ export default function AppLayout({ variant }: { variant: 'admin' | 'super' }) {
         </div>
       )}
 
-      {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-slate-200/80 bg-white px-4 sm:px-6">
           <div className="flex items-center gap-3">
@@ -194,7 +201,11 @@ export default function AppLayout({ variant }: { variant: 'admin' | 'super' }) {
               <Menu className="h-5 w-5" />
             </button>
             <p className="hidden text-sm text-slate-400 sm:block">
-              {variant === 'super' ? 'SaccoFlow Platform Administration' : institution?.name}
+              {variant === 'super'
+                ? 'SaccoFlow Platform Administration'
+                : variant === 'member'
+                  ? 'Member portal'
+                  : institution?.name}
             </p>
           </div>
 

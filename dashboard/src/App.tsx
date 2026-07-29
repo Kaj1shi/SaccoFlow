@@ -11,6 +11,7 @@ import ReportsPage from './pages/admin/ReportsPage'
 import SettingsPage from './pages/admin/SettingsPage'
 import AccountSettingsPage from './pages/AccountSettingsPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
+import MemberHomePage from './pages/member/MemberHomePage'
 import SuperOverviewPage from './pages/super/SuperOverviewPage'
 import RegistrationsPage from './pages/super/RegistrationsPage'
 import UsersPage from './pages/super/UsersPage'
@@ -28,12 +29,25 @@ function RequireAuth() {
     )
   }
   if (!session || !profile) {
-    // The site's login.html handles sign-in. The internal /login page is a
-    // fallback for running the dashboard on its own with `npm run dev`.
     if (import.meta.env.DEV) return <Navigate to="/login" replace />
     window.location.href = loginPageUrl()
     return null
   }
+  return <Outlet />
+}
+
+function RequireStaff() {
+  const { profile, isSuperAdmin } = useAuth()
+  if (profile?.role === 'member' && !isSuperAdmin) {
+    return <Navigate to="/member" replace />
+  }
+  return <Outlet />
+}
+
+function RequireMember() {
+  const { profile, isSuperAdmin } = useAuth()
+  if (isSuperAdmin) return <Navigate to="/super" replace />
+  if (profile?.role !== 'member') return <Navigate to="/" replace />
   return <Outlet />
 }
 
@@ -44,8 +58,10 @@ function RequireSuper() {
 }
 
 function HomeRedirect() {
-  const { isSuperAdmin } = useAuth()
-  return isSuperAdmin ? <Navigate to="/super" replace /> : <DashboardPage />
+  const { isSuperAdmin, profile } = useAuth()
+  if (isSuperAdmin) return <Navigate to="/super" replace />
+  if (profile?.role === 'member') return <Navigate to="/member" replace />
+  return <DashboardPage />
 }
 
 export default function App() {
@@ -57,16 +73,26 @@ export default function App() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           <Route element={<RequireAuth />}>
+            {/* Member portal */}
+            <Route element={<RequireMember />}>
+              <Route element={<AppLayout variant="member" />}>
+                <Route path="member" element={<MemberHomePage />} />
+                <Route path="member/account" element={<AccountSettingsPage />} />
+              </Route>
+            </Route>
+
             {/* SACCO staff dashboard */}
-            <Route element={<AppLayout variant="admin" />}>
-              <Route index element={<HomeRedirect />} />
-              <Route path="members" element={<MembersPage />} />
-              <Route path="savings" element={<SavingsPage />} />
-              <Route path="loans" element={<LoansPage />} />
-              <Route path="transactions" element={<TransactionsPage />} />
-              <Route path="reports" element={<ReportsPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-              <Route path="account" element={<AccountSettingsPage />} />
+            <Route element={<RequireStaff />}>
+              <Route element={<AppLayout variant="admin" />}>
+                <Route index element={<HomeRedirect />} />
+                <Route path="members" element={<MembersPage />} />
+                <Route path="savings" element={<SavingsPage />} />
+                <Route path="loans" element={<LoansPage />} />
+                <Route path="transactions" element={<TransactionsPage />} />
+                <Route path="reports" element={<ReportsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="account" element={<AccountSettingsPage />} />
+              </Route>
             </Route>
 
             {/* Platform super admin console */}
