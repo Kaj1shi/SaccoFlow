@@ -137,9 +137,7 @@ export default function AppLayout({ variant }: { variant: 'admin' | 'super' | 'm
   const brandSub =
     variant === 'super'
       ? 'Platform Console'
-      : variant === 'member'
-        ? 'Member portal'
-        : (institution?.name ?? 'SACCO Dashboard')
+      : (institution?.name ?? (variant === 'member' ? 'Your SACCO' : 'SACCO Dashboard'))
   const name = profile ? `${profile.first_name} ${profile.last_name}` : ''
 
   const isDesktop = () => window.matchMedia('(min-width: 1024px)').matches
@@ -202,11 +200,7 @@ export default function AppLayout({ variant }: { variant: 'admin' | 'super' | 'm
               <Menu className="h-5 w-5" />
             </button>
             <p className="hidden text-sm text-slate-400 sm:block">
-              {variant === 'super'
-                ? 'SaccoFlow Platform Administration'
-                : variant === 'member'
-                  ? 'Member portal'
-                  : institution?.name}
+              {variant === 'super' ? 'SaccoFlow Platform Administration' : institution?.name}
             </p>
           </div>
 
