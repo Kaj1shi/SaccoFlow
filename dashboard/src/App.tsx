@@ -13,6 +13,9 @@ import SettingsPage from './pages/admin/SettingsPage'
 import AccountSettingsPage from './pages/AccountSettingsPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import MemberHomePage from './pages/member/MemberHomePage'
+import MemberSavingsPage from './pages/member/MemberSavingsPage'
+import MemberLoansPage from './pages/member/MemberLoansPage'
+import MemberTransactionsPage from './pages/member/MemberTransactionsPage'
 import SuperOverviewPage from './pages/super/SuperOverviewPage'
 import RegistrationsPage from './pages/super/RegistrationsPage'
 import UsersPage from './pages/super/UsersPage'
@@ -117,6 +120,9 @@ export default function App() {
             <Route element={<RequireMember />}>
               <Route element={<AppLayout variant="member" />}>
                 <Route path="member" element={<MemberHomePage />} />
+                <Route path="member/savings" element={<MemberSavingsPage />} />
+                <Route path="member/loans" element={<MemberLoansPage />} />
+                <Route path="member/transactions" element={<MemberTransactionsPage />} />
                 <Route path="member/account" element={<AccountSettingsPage />} />
               </Route>
             </Route>

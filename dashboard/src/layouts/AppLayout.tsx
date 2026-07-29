@@ -47,6 +47,9 @@ const superNav: NavItem[] = [
 
 const memberNav: NavItem[] = [
   { to: '/member', label: 'My dashboard', icon: <LayoutDashboard className="h-5 w-5" />, end: true },
+  { to: '/member/savings', label: 'Savings', icon: <PiggyBank className="h-5 w-5" /> },
+  { to: '/member/loans', label: 'Loans', icon: <HandCoins className="h-5 w-5" /> },
+  { to: '/member/transactions', label: 'Transactions', icon: <ArrowLeftRight className="h-5 w-5" /> },
 ]
 
 const navItemClass = ({ isActive }: { isActive: boolean }) =>
