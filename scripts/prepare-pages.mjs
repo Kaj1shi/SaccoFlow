@@ -55,6 +55,73 @@ for (const f of staticFiles) {
 cpSync(join(ROOT, 'js'), join(DOCS, 'js'), { recursive: true })
 cpSync(join(ROOT, 'dashboard', 'dist'), join(DOCS, 'dashboard'), { recursive: true })
 
+// GitHub Pages only serves real files. Duplicate the SPA shell for client routes
+// (especially /dashboard/reset-password from Supabase email links).
+const dashIndexPath = join(DOCS, 'dashboard', 'index.html')
+const dashIndexHtml = readFileSync(dashIndexPath, 'utf8')
+const spaRoutes = [
+  'reset-password',
+  'login',
+  'member',
+  'member/account',
+  'account',
+  'members',
+  'savings',
+  'loans',
+  'transactions',
+  'reports',
+  'settings',
+  'super',
+  'super/registrations',
+  'super/users',
+  'super/audit',
+  'super/account',
+]
+for (const route of spaRoutes) {
+  const segments = route.split('/')
+  const dir = join(DOCS, 'dashboard', ...segments)
+  mkdirSync(dir, { recursive: true })
+  writeFileSync(join(dir, 'index.html'), dashIndexHtml)
+  if (segments.length === 1) {
+    writeFileSync(join(DOCS, 'dashboard', `${route}.html`), dashIndexHtml)
+  }
+}
+
+// Custom 404: bounce unknown /dashboard/* URLs into the SPA without dropping auth hashes
+writeFileSync(
+  join(DOCS, '404.html'),
+  `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<script>
+(function () {
+  var path = location.pathname || '/';
+  var search = location.search || '';
+  var hash = location.hash || '';
+  var parts = path.split('/').filter(Boolean);
+  var repo = parts[0] || '${REPO}';
+  if (parts[1] === 'dashboard') {
+    try {
+      sessionStorage.setItem('sf-spa-redirect', JSON.stringify({ path: path, search: search, hash: hash }));
+    } catch (e) {}
+    location.replace('/' + repo + '/dashboard/' + search + hash);
+    return;
+  }
+  if (/access_token=|type=recovery|type=invite|type=signup/i.test(hash) || /[?&]code=/.test(search)) {
+    location.replace('/' + repo + '/dashboard/reset-password' + search + hash);
+    return;
+  }
+  location.replace('/' + repo + '/' + search + hash);
+})();
+</script>
+</head>
+<body><p>Redirecting…</p></body>
+</html>
+`
+)
+
 // Tell GitHub Pages this is not a Jekyll site (underscored folders etc.)
 writeFileSync(join(DOCS, '.nojekyll'), '')
 
@@ -62,6 +129,8 @@ console.log('\nDone. docs/ is ready.')
 console.log('1. Commit and push docs/')
 console.log('2. GitHub → Settings → Pages → Branch: main /docs')
 console.log(`3. Open https://Kaj1shi.github.io/${REPO}/login.html`)
-console.log('4. In Supabase → Auth → URL Configuration, add:')
+console.log('4. In Supabase → Auth → URL Configuration, add BOTH:')
 console.log(`   Site URL: https://Kaj1shi.github.io/${REPO}/`)
-console.log(`   Redirect: https://Kaj1shi.github.io/${REPO}/dashboard/reset-password`)
+console.log(`   Redirect URLs:`)
+console.log(`     https://Kaj1shi.github.io/${REPO}/dashboard/reset-password`)
+console.log(`     https://Kaj1shi.github.io/${REPO}/dashboard/reset-password/**`)

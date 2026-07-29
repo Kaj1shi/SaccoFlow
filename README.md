@@ -27,4 +27,8 @@ Then commit/push `docs/`, and in the repo set **Settings → Pages → Branch: m
 Also add these in Supabase → Authentication → URL Configuration:
 
 - Site URL: `https://Kaj1shi.github.io/SaccoFlow/`
-- Redirect URLs: `https://Kaj1shi.github.io/SaccoFlow/dashboard/reset-password`
+- Redirect URLs (add both):
+  - `https://Kaj1shi.github.io/SaccoFlow/dashboard/reset-password`
+  - `https://Kaj1shi.github.io/SaccoFlow/dashboard/reset-password/**`
+
+If a reset link is not allowlisted, Supabase sends users to the Site URL (marketing home) instead of the reset page.

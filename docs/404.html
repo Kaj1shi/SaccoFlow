@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<script>
+(function () {
+  var path = location.pathname || '/';
+  var search = location.search || '';
+  var hash = location.hash || '';
+  var parts = path.split('/').filter(Boolean);
+  var repo = parts[0] || 'SaccoFlow';
+  if (parts[1] === 'dashboard') {
+    try {
+      sessionStorage.setItem('sf-spa-redirect', JSON.stringify({ path: path, search: search, hash: hash }));
+    } catch (e) {}
+    location.replace('/' + repo + '/dashboard/' + search + hash);
+    return;
+  }
+  if (/access_token=|type=recovery|type=invite|type=signup/i.test(hash) || /[?&]code=/.test(search)) {
+    location.replace('/' + repo + '/dashboard/reset-password' + search + hash);
+    return;
+  }
+  location.replace('/' + repo + '/' + search + hash);
+})();
+</script>
+</head>
+<body><p>Redirecting…</p></body>
+</html>

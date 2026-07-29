@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="SaccoFlow staff dashboard — manage members, savings, loans and reports." />
     <title>SaccoFlow Dashboard</title>
+    <!-- Restore deep-link path after GitHub Pages 404.html bounce (keeps auth hash). -->
+    <script>
+      (function () {
+        try {
+          var raw = sessionStorage.getItem('sf-spa-redirect')
+          if (!raw) return
+          sessionStorage.removeItem('sf-spa-redirect')
+          var o = JSON.parse(raw)
+          if (o && o.path) {
+            history.replaceState(null, '', o.path + (o.search || '') + (o.hash || ''))
+          }
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
