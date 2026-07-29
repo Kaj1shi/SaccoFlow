@@ -3,7 +3,7 @@ import { Plus, Search } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { formatDate, fullName, genRef } from '../../lib/format'
-import { inviteMemberPortal } from '../../lib/memberInvite'
+import { inviteMemberPortal, resendMemberPortalInvite } from '../../lib/memberInvite'
 import {
   EmptyState,
   ErrorNote,
@@ -27,6 +27,7 @@ export default function MembersPage() {
   const [statusFilter, setStatusFilter] = useState<(typeof STATUS_FILTERS)[number]>('all')
   const [showAdd, setShowAdd] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [resendingId, setResendingId] = useState<string | null>(null)
 
   const [form, setForm] = useState({
     first_name: '',
@@ -134,12 +135,33 @@ export default function MembersPage() {
 
     if (invite.ok) {
       setInfo(
-        `Member added. An invite email was sent to ${email} so they can set a password and open their portal.`
+        `Member added. Password invite queued for ${email}. Check spam/junk — Supabase’s free mailer only sends ~2 emails per hour project-wide.`
       )
     } else {
       setError(`Member was saved, but the portal invite failed: ${invite.error}`)
     }
     load()
+  }
+
+  const handleResendInvite = async (member: Member) => {
+    if (!profile || !member.email || resendingId) return
+    setResendingId(member.id)
+    setError('')
+    setInfo('')
+    const result = await resendMemberPortalInvite({
+      memberId: member.id,
+      institutionId: profile.institution_id,
+      email: member.email,
+      firstName: member.first_name,
+      lastName: member.last_name,
+      phone: member.phone,
+    })
+    setResendingId(null)
+    if (result.ok) {
+      setInfo(`Invite re-sent to ${member.email}. Check spam/junk if it doesn’t appear within a few minutes.`)
+    } else {
+      setError(result.error)
+    }
   }
 
   const setStatus = async (member: Member, status: Member['status']) => {
@@ -220,23 +242,35 @@ export default function MembersPage() {
                 <StatusBadge status={m.status} />
               </td>
               <td className="px-4 py-3 text-right">
-                {m.status === 'active' ? (
-                  <button
-                    type="button"
-                    onClick={() => setStatus(m, 'suspended')}
-                    className="text-xs font-medium text-orange-600 hover:underline"
-                  >
-                    Suspend
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setStatus(m, 'active')}
-                    className="text-xs font-medium text-brand-600 hover:underline"
-                  >
-                    Activate
-                  </button>
-                )}
+                <div className="flex flex-wrap items-center justify-end gap-3">
+                  {m.email ? (
+                    <button
+                      type="button"
+                      disabled={resendingId === m.id}
+                      onClick={() => handleResendInvite(m)}
+                      className="text-xs font-medium text-brand-700 hover:underline disabled:opacity-50"
+                    >
+                      {resendingId === m.id ? 'Sending…' : 'Resend invite'}
+                    </button>
+                  ) : null}
+                  {m.status === 'active' ? (
+                    <button
+                      type="button"
+                      onClick={() => setStatus(m, 'suspended')}
+                      className="text-xs font-medium text-orange-600 hover:underline"
+                    >
+                      Suspend
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setStatus(m, 'active')}
+                      className="text-xs font-medium text-brand-600 hover:underline"
+                    >
+                      Activate
+                    </button>
+                  )}
+                </div>
               </td>
             </tr>
           ))}

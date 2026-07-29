@@ -13,10 +13,65 @@ function resetPasswordRedirect(): string {
   )
 }
 
+function authErrorMessage(body: unknown, fallback: string): string {
+  if (!body || typeof body !== 'object') return fallback
+  const b = body as Record<string, unknown>
+  const msg = b.msg || b.message || b.error_description || b.error
+  return msg ? String(msg) : fallback
+}
+
+function isRateLimit(msg: string): boolean {
+  return /rate limit|too many|over_email/i.test(msg)
+}
+
+/**
+ * Send (or re-send) the password-setup email only.
+ * Prefer this when the Auth user already exists — uses one email slot.
+ */
+export async function sendMemberInviteEmail(
+  email: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const url = import.meta.env.VITE_SUPABASE_URL as string
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+  const redirectTo = resetPasswordRedirect()
+
+  const recoverRes = await fetch(
+    `${url}/auth/v1/recover?redirect_to=${encodeURIComponent(redirectTo)}`,
+    {
+      method: 'POST',
+      headers: {
+        apikey: anonKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email.trim().toLowerCase() }),
+    }
+  )
+  const recoverJson = await recoverRes.json().catch(() => ({}))
+  if (!recoverRes.ok) {
+    const msg = authErrorMessage(recoverJson, 'Invite email failed.')
+    if (isRateLimit(msg)) {
+      return {
+        ok: false,
+        error:
+          'Supabase email rate limit hit (built-in mailer allows only ~2 emails per hour). Wait about an hour, or set up custom SMTP under Authentication → Emails. Meanwhile they can try Forgot password on the login page.',
+      }
+    }
+    return {
+      ok: false,
+      error: `${msg} Ask them to use Forgot password on the login page, or check that the reset URL is allowlisted in Supabase Auth → URL Configuration.`,
+    }
+  }
+
+  return { ok: true }
+}
+
 /**
  * Create Auth user + users profile for a member without replacing the admin session.
  * Uses raw Auth HTTP APIs (not supabase.auth.signUp) so the staff session stays put,
  * then sends a recovery email so the member sets their own password.
+ *
+ * Tip: turn OFF "Confirm email" in Supabase Auth → Providers → Email so signup does not
+ * burn an email slot; only the password invite is sent (critical on the free mailer).
  */
 export async function inviteMemberPortal(opts: {
   memberId: string
@@ -52,23 +107,16 @@ export async function inviteMemberPortal(opts: {
   })
   const signupJson = await signupRes.json().catch(() => ({}))
   if (!signupRes.ok) {
-    const msg =
-      signupJson.msg ||
-      signupJson.error_description ||
-      signupJson.error ||
-      'Could not create the member login.'
+    const msg = authErrorMessage(signupJson, 'Could not create the member login.')
     if (/already|registered|exists/i.test(String(msg))) {
-      return {
-        ok: false,
-        error:
-          'That email already has a login. Use a different email, or ask them to use Forgot password.',
-      }
+      // Login already exists — just (re)send the password email.
+      return sendMemberInviteEmail(email)
     }
-    if (/rate limit|too many/i.test(String(msg))) {
+    if (isRateLimit(String(msg))) {
       return {
         ok: false,
         error:
-          'Email rate limit reached. Member was saved, but the invite could not be completed — try again later or use Forgot password after creating their Auth user.',
+          'Email rate limit reached while creating the login. Member was saved — wait ~1 hour then use Resend invite, or turn off Confirm email / add custom SMTP in Supabase.',
       }
     }
     return { ok: false, error: String(msg) }
@@ -102,25 +150,43 @@ export async function inviteMemberPortal(opts: {
     }
   }
 
-  const redirectTo = resetPasswordRedirect()
-  const recoverRes = await fetch(
-    `${url}/auth/v1/recover?redirect_to=${encodeURIComponent(redirectTo)}`,
-    {
-      method: 'POST',
-      headers: {
-        apikey: anonKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-    }
-  )
-  if (!recoverRes.ok) {
+  // If Confirm email is ON, signup already consumed an email slot. Still send recover
+  // so they can set a password — but warn clearly when the free mailer rate-limits.
+  const inviteMail = await sendMemberInviteEmail(email)
+  if (!inviteMail.ok) {
+    const confirmationSent = Boolean(authUser?.confirmation_sent_at)
     return {
       ok: false,
-      error:
-        'Member login was created, but the invite email failed. Ask them to use Forgot password on the login page.',
+      error: confirmationSent
+        ? `${inviteMail.error} A confirmation email may already be in their inbox or spam — after confirming, use Forgot password on the login page.`
+        : inviteMail.error,
     }
   }
 
   return { ok: true }
+}
+
+/** Re-send invite for an existing member row (creates Auth user if missing). */
+export async function resendMemberPortalInvite(opts: {
+  memberId: string
+  institutionId: string
+  email: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  const email = opts.email.trim().toLowerCase()
+  if (!email) return { ok: false, error: 'This member has no email on file.' }
+
+  const { data: linked } = await supabase
+    .from('users')
+    .select('id')
+    .eq('member_id', opts.memberId)
+    .maybeSingle()
+
+  if (linked?.id) {
+    return sendMemberInviteEmail(email)
+  }
+
+  return inviteMemberPortal(opts)
 }
