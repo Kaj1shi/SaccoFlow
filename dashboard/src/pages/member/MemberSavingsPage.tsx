@@ -132,6 +132,19 @@ export default function MemberSavingsPage() {
         </div>
       )}
 
+      {activeAccounts.length === 0 && accounts.length === 0 && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          Deposit and withdraw stay disabled until your SACCO opens a savings account for you (staff:
+          Savings → Open account).
+        </div>
+      )}
+      {activeAccounts.length === 0 && accounts.length > 0 && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          You have savings accounts, but none are active. Ask your SACCO to activate one before
+          depositing or withdrawing.
+        </div>
+      )}
+
       <div className="mb-6 grid gap-4 sm:grid-cols-2">
         <StatCard
           label="My total savings"
