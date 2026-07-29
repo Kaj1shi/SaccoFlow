@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import { loginPageUrl } from '../lib/site'
 import type { Institution, Profile } from '../types'
 
 interface AuthState {
@@ -52,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async function bootstrap(s: Session | null) {
       if (!s?.user) {
         if (!cancelled) {
+          setSession(null)
           setProfile(null)
           setInstitution(null)
           setLoading(false)
@@ -77,9 +79,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       bootstrap(s)
     })
 
+    // Back/forward cache can restore a signed-in dashboard after logout — re-check.
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted) return
+      void supabase.auth.getSession().then(({ data }) => {
+        if (cancelled) return
+        if (!data.session) {
+          setSession(null)
+          setProfile(null)
+          setInstitution(null)
+          setLoading(false)
+          if (!import.meta.env.DEV) {
+            window.location.replace(loginPageUrl())
+          }
+        } else {
+          setSession(data.session)
+          void bootstrap(data.session)
+        }
+      })
+    }
+    window.addEventListener('pageshow', onPageShow)
+
     return () => {
       cancelled = true
       sub.subscription.unsubscribe()
+      window.removeEventListener('pageshow', onPageShow)
     }
   }, [])
 
@@ -100,7 +124,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    setSession(null)
+    setProfile(null)
+    setInstitution(null)
+    await supabase.auth.signOut({ scope: 'local' })
   }
 
   const refreshProfile = async () => {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import AppLayout from './layouts/AppLayout'
@@ -18,22 +19,61 @@ import UsersPage from './pages/super/UsersPage'
 import AuditLogsPage from './pages/super/AuditLogsPage'
 import { Spinner } from './components/ui'
 import { loginPageUrl } from './lib/site'
+import { supabase } from './lib/supabase'
+
+function redirectToLogin() {
+  // replace() so Back does not restore a signed-out dashboard entry
+  window.location.replace(loginPageUrl())
+}
+
+function AuthLoading({ label }: { label: string }) {
+  return (
+    <div className="flex h-full min-h-screen items-center justify-center bg-slate-50">
+      <Spinner label={label} />
+    </div>
+  )
+}
 
 function RequireAuth() {
   const { session, profile, loading } = useAuth()
-  if (loading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Spinner label="Loading your workspace…" />
-      </div>
-    )
-  }
+  const signedOut = !loading && (!session || !profile)
+
+  useEffect(() => {
+    if (!signedOut) return
+    // Drop a stale Auth session that has no app profile so we don't loop
+    if (session && !profile) {
+      void supabase.auth.signOut({ scope: 'local' })
+    }
+    if (import.meta.env.DEV) return
+    redirectToLogin()
+  }, [signedOut, session, profile])
+
+  if (loading) return <AuthLoading label="Loading your workspace…" />
   if (!session || !profile) {
     if (import.meta.env.DEV) return <Navigate to="/login" replace />
-    window.location.href = loginPageUrl()
-    return null
+    return <AuthLoading label="Redirecting to sign in…" />
   }
   return <Outlet />
+}
+
+function FallbackRoute() {
+  const { session, profile, loading, isSuperAdmin } = useAuth()
+
+  useEffect(() => {
+    if (loading) return
+    if (session && profile) return
+    if (import.meta.env.DEV) return
+    redirectToLogin()
+  }, [loading, session, profile])
+
+  if (loading) return <AuthLoading label="Loading…" />
+  if (!session || !profile) {
+    if (import.meta.env.DEV) return <Navigate to="/login" replace />
+    return <AuthLoading label="Redirecting to sign in…" />
+  }
+  if (isSuperAdmin) return <Navigate to="/super" replace />
+  if (profile.role === 'member') return <Navigate to="/member" replace />
+  return <Navigate to="/" replace />
 }
 
 function RequireStaff() {
@@ -107,7 +147,7 @@ export default function App() {
             </Route>
           </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<FallbackRoute />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

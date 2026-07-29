@@ -151,11 +151,12 @@ export default function AppLayout({ variant }: { variant: 'admin' | 'super' | 'm
 
   const handleSignOut = async () => {
     await signOut()
+    // Always hard-replace so history Back cannot reopen a signed-out dashboard shell
     if (import.meta.env.DEV) {
       navigate('/login', { replace: true })
-    } else {
-      window.location.href = loginPageUrl()
+      return
     }
+    window.location.replace(loginPageUrl())
   }
 
   return (
